@@ -1,6 +1,7 @@
 # add project.nvim
 
-# vim-maketable
+# vim-maketable 
+done
 
 # null-ls -->nvim-lint
 
@@ -9,3 +10,4 @@
 # sync upstream
 
 # dotfiles refactor
+1

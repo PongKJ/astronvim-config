@@ -3,43 +3,43 @@ local file_exists = require("utils").file_exists
 local utils = require "utils"
 
 local function create_buf_config_file()
-  local source_file = vim.fn.stdpath "config" .. "/buf.yaml"
+  local source_file = vim.fn.stdpath "config" .. "/dotfiles/buf.yaml"
   local target_file = vim.fn.getcwd() .. "/buf.yaml"
   utils.copy_file(source_file, target_file)
 end
 
 local function create_buf_gen_config_file()
-  local source_file = vim.fn.stdpath "config" .. "/buf.gen.yaml"
+  local source_file = vim.fn.stdpath "config" .. "/dotfiles/buf.gen.yaml"
   local target_file = vim.fn.getcwd() .. "/buf.gen.yaml"
   utils.copy_file(source_file, target_file)
 end
 
 local function diagnostic_auto_import_config()
-  local system_config = vim.fn.stdpath "config" .. "/buf.yaml"
-  local project_config = vim.fn.getcwd() .. "/buf.yaml"
-
   local null_ls = require "null-ls"
   local buf_buildins = null_ls.builtins.formatting.buf
-  table.insert(buf_buildins._opts.args, "--config")
-  if vim.fn.filereadable(project_config) == 1 then
-    table.insert(buf_buildins._opts.args, project_config)
-  else
-    table.insert(buf_buildins._opts.args, system_config)
+  local config_file = require("utils").detect_files_in_paths(
+    { ".buf.yaml", "buf.yaml" },
+    { vim.fn.getcwd(), vim.fn.stdpath "config" .. "/dotfiles" }
+  )
+  if config_file then
+    table.insert(buf_buildins._opts.args, "--config")
+    table.insert(buf_buildins._opts.args, config_file)
   end
+
   null_ls.register(null_ls.builtins.formatting.buf.with(buf_buildins))
 end
 
 local function formatting_auto_import_config()
-  local system_config = vim.fn.stdpath "config" .. "/buf.yaml"
-  local project_config = vim.fn.getcwd() .. "/buf.yaml"
-
   local null_ls = require "null-ls"
   local buf_buildins = null_ls.builtins.diagnostics.buf
-  table.insert(buf_buildins._opts.args, "--config")
-  if vim.fn.filereadable(project_config) == 1 then
-    table.insert(buf_buildins._opts.args, project_config)
-  else
-    table.insert(buf_buildins._opts.args, system_config)
+
+  local config_file = require("utils").detect_files_in_paths(
+    { ".buf.yaml", "buf.yaml" },
+    { vim.fn.getcwd(), vim.fn.stdpath "config" .. "/dotfiles" }
+  )
+  if config_file then
+    table.insert(buf_buildins._opts.args, "--config")
+    table.insert(buf_buildins._opts.args, config_file)
   end
   null_ls.register(null_ls.builtins.diagnostics.buf.with(buf_buildins))
 end

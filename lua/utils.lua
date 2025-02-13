@@ -422,9 +422,11 @@ function M.get_global_npm_path()
   end
 end
 
--- Check if a file in file_list exists in a list of paths,
--- return the full path if this file exists in specific path
+-- detect files in paths
+-- return the first file within 'file_list' found in the paths
 -- if no file exists in any paths, return false
+--- @param file_list table
+--- @param path_list table
 function M.detect_files_in_paths(file_list, path_list)
   for _, file_name in pairs(file_list) do
     for _, path in pairs(path_list) do
@@ -452,47 +454,11 @@ function M.detect_workspace_type()
 end
 
 function M.is_file_binary_pre_read()
+  -- stylua: ignore
   local binary_ext = {
-    "out",
-    "bin",
-    "jpeg",
-    "pak",
-    "gz",
-    "rar",
-    "exe",
-    "bz2",
-    "tar",
-    "xz",
-    "Z",
-    "rpm",
-    "zip",
-    "a",
-    "so",
-    "o",
-    "jar",
-    "dll",
-    "lib",
-    "deb",
-    "I",
-    "png",
-    "jpg",
-    "mp3",
-    "mp4",
-    "m4a",
-    "flv",
-    "mkv",
-    "rmvb",
-    "avi",
-    "pcap",
-    "pdf",
-    "docx",
-    "xlsx",
-    "pptx",
-    "ram",
-    "mid",
-    "dwg",
-    "dtb",
-    "elf",
+    "out","bin","jpeg","pak","gz","rar","exe","bz2","tar","xz","Z","rpm","zip","a","so","o","jar",
+    "dll","lib","deb","I","png","jpg","mp3","mp4","m4a","flv","mkv","rmvb","avi","pcap","pdf","docx",
+    "xlsx","pptx","ram","mid","dwg","dtb","elf",
   }
   -- only work on normal buffers
   -- Is this working?

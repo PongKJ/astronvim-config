@@ -2,7 +2,7 @@ local utils = require "astrocore"
 local set_mappings = utils.set_mappings
 
 local function create_sqlfluff_config_file()
-  local source_file = vim.fn.stdpath "config" .. "/.sqlfluff"
+  local source_file = vim.fn.stdpath "config" .. "/dotfiles/.sqlfluff"
   local target_file = vim.fn.getcwd() .. "/.sqlfluff"
   require("utils").copy_file(source_file, target_file)
 end
@@ -55,13 +55,13 @@ return {
       opts.handlers.sqlfluff = function()
         local null_ls = require "null-ls"
         local buf_diagnostics_buildins = null_ls.builtins.diagnostics.sqlfluff
-        table.insert(buf_diagnostics_buildins._opts.args, "--config")
-        local system_config = vim.fn.stdpath "config" .. "/.sqlfluff"
-        local project_config = vim.fn.getcwd() .. "/.sqlfluff"
-        if vim.fn.filereadable(project_config) == 1 then
-          table.insert(buf_diagnostics_buildins._opts.args, project_config)
-        else
-          table.insert(buf_diagnostics_buildins._opts.args, system_config)
+        local config_file = require("utils").detect_files_in_paths(
+          { ".sqlfluff", "sqlfluff" },
+          { vim.fn.getcwd(), vim.fn.stdpath "config" .. "/dotfiles" }
+        )
+        if config_file then
+          table.insert(buf_diagnostics_buildins._opts.args, "--config")
+          table.insert(buf_diagnostics_buildins._opts.args, config_file)
         end
         null_ls.register(null_ls.builtins.diagnostics.sqlfluff.with {
           generator_opts = buf_diagnostics_buildins._opts,

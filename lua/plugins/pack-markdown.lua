@@ -75,13 +75,13 @@ return {
       opts.handlers.markdownlint = function()
         local null_ls = require "null-ls"
         local markdownlint_diagnostics_buildins = null_ls.builtins.diagnostics.markdownlint
-        table.insert(markdownlint_diagnostics_buildins._opts.args, "--config")
-        local system_config = vim.fn.stdpath "config" .. "/.markdownlint.jsonc"
-        local project_config = vim.fn.getcwd() .. "/.markdownlint.jsonc"
-        if vim.fn.filereadable(project_config) == 1 then
-          table.insert(markdownlint_diagnostics_buildins._opts.args, project_config)
-        else
-          table.insert(markdownlint_diagnostics_buildins._opts.args, system_config)
+        local config_file = require("utils").detect_files_in_paths(
+          { ".markdownlint.jsonc", ".markdownlint.json" },
+          { vim.fn.getcwd(), vim.fn.stdpath "config" .. "/dotfiles" }
+        )
+        if config_file then
+          table.insert(markdownlint_diagnostics_buildins._opts.args, "--config")
+          table.insert(markdownlint_diagnostics_buildins._opts.args, config_file)
         end
         null_ls.register(null_ls.builtins.diagnostics.markdownlint.with {
           generator_opts = markdownlint_diagnostics_buildins._opts,
@@ -115,7 +115,7 @@ return {
       "nvim-tree/nvim-web-devicons",
     },
     opts = {
-      -- hybrid_modes = { "n" },
+      hybrid_modes = { "n" },
     },
   },
 }

@@ -312,8 +312,6 @@ Copilot Mappings
 | Open chat panel          | <kbd>Leader+n+c</kbd> | n    |
 | Accept inline suggestion | <kbd>Ctrl+.</kbd>     | n    |
 
-## NOTE
-
 ### _vim.lsp.buf.hover()_ `KK` jump into signature help float window
 
 > Displays hover information about the symbol under the cursor in a floating window. Calling the function twice will jump into the floating window.
