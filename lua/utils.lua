@@ -1,3 +1,4 @@
+-- TODO: Move some functions to specified file
 local M = {}
 
 function M.decode_json(filename)
@@ -328,38 +329,12 @@ function M.tte(selection, open_callback, close_callback, flag)
 end
 
 function M.get_all_cmds()
+  -- stylua: ignore
   return {
-    "beams",
-    "binarypath",
-    "blackhole",
-    "bouncyballs",
-    "bubbles",
-    "burn",
-    "colorshift",
-    "crumble",
-    "decrypt",
-    "errorcorrect",
-    "expand",
-    "fireworks",
-    "middleout",
-    "orbittingvolley",
-    "overflow",
-    "pour",
-    "print",
-    "rain",
-    "randomsequence",
-    "rings",
-    "scattered",
-    "slice",
-    "slide",
-    "spotlights",
-    "spray",
-    "swarm",
-    "synthgrid",
-    "unstable",
-    "vhstape",
-    "waves",
-    "wipe",
+    "beams","binarypath","blackhole","bouncyballs","bubbles","burn","colorshift","crumble","decrypt",
+    "errorcorrect","expand","fireworks","middleout","orbittingvolley","overflow","pour","print",
+    "rain","randomsequence","rings","scattered","slice","slide","spotlights","spray","swarm",
+    "synthgrid","unstable","vhstape","waves","wipe",
   }
 end
 

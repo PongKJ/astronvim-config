@@ -41,7 +41,7 @@ return {
         maps.n["<Leader>csb"] = { "<Cmd>CMakeSelectBuildTarget<CR>", desc = "Select Build Target" }
         maps.n["<Leader>ct"] = { "<Cmd>CMakeRunTest<CR>", desc = "Test" }
         maps.n["<Leader>cd"] = { "<Cmd>CMakeDebug<CR>", desc = "Debug" }
-        maps.n["<LEader>cc"] = { "<Cmd>CMakeClean<CR>", desc = "Clean" }
+        maps.n["<Leader>cc"] = { "<Cmd>CMakeClean<CR>", desc = "Clean" }
         maps.n["<F5>"] = { "<cmd>CMakeDebug<CR>", desc = "Start Debug" }
       elseif workspace_type == "rust" or workspace_type == "python" or workspace_type == "frontend" then
         if workspace_type == "rust" then

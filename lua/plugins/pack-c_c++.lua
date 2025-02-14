@@ -32,7 +32,7 @@ return {
         "--header-insertion=never",
         "--pch-storage=disk",
         "--all-scopes-completion",
-        "--header-insertion-decorators"
+        "--header-insertion-decorators",
         -- INFO:Clangd will supports this option soon,bu not yet,currently we use
         -- clang-format
         -- "-style=file:" .. clang_format_config,
@@ -74,9 +74,13 @@ return {
     "jay-babu/mason-null-ls.nvim",
     optional = true,
     event = { "BufReadPre", "BufNewFile" },
+    dependencies = {
+      "williamboman/mason.nvim",
+      "nvimtools/none-ls.nvim",
+    },
     opts = function(_, opts)
       opts.ensure_installed =
-        require("astrocore").list_insert_unique(opts.ensure_installed, { "clang-format", "cmake-format", "cmake-lint" })
+        require("astrocore").list_insert_unique(opts.ensure_installed, { "clang-format", "cmakelang" })
     end,
   },
   {
@@ -105,8 +109,8 @@ return {
         { user_config, global_config }
       )
       utils.list_insert_unique(cmake_format_args, { "-c", path })
-      -- HACK: Why cmake_format need '-l error' to work?',and it must be added
-      -- after '-c' option,otherwise it will not work
+      -- HACK: cmake_format need '-l error' to work?,and it must be append
+      -- after '-c' option, otherwise it has no effect
       utils.list_insert_unique(cmake_format_args, { "-l", "error" })
       path = require("utils").detect_files_in_paths({ ".cmakelintrc" }, { user_config, global_config })
       utils.list_insert_unique(cmake_lint_args, { "--config=" .. path })

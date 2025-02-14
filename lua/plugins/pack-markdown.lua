@@ -8,6 +8,47 @@ local markdown_table_change = function()
   end)
 end
 
+local start_marker = "<!-- markdown toc:start -->"
+local end_marker = "<!-- markdown toc:stop  -->"
+
+local function gen_toc(start_linenr, end_linenr)
+  local parser = vim.treesitter.get_parser(0, "markdown")
+  local root = parser:parse()[1]:root()
+  local query = vim.treesitter.query.parse(
+    "markdown",
+    [[
+(atx_heading) @header
+    ]]
+  )
+  local lines = { start_marker }
+  for _, node in query:iter_captures(root, 0, end_linenr) do
+    local level = tonumber(node:child(0):type():match "atx_h(%d)_marker") - 2
+    if level >= 0 then
+      local title = vim.treesitter.get_node_text(node:field("heading_content")[1], 0)
+      local link = title:gsub("%s", "-")
+      lines[#lines + 1] = ("  "):rep(level) .. ("* [%s](#%s)"):format(title, link)
+    end
+  end
+  lines[#lines + 1] = end_marker
+  vim.api.nvim_buf_set_lines(0, start_linenr, end_linenr, true, lines)
+end
+local function update_toc()
+  local lines = vim.api.nvim_buf_get_lines(0, 0, -1, true)
+  local start_linenr, end_linenr
+  for i, line in ipairs(lines) do
+    if line == start_marker then
+      start_linenr = i - 1
+    else
+      if line == end_marker then
+        end_linenr = i
+        break
+      end
+    end
+  end
+  if not (start_linenr and end_linenr) then return end
+  gen_toc(start_linenr, end_linenr)
+end
+
 ---@type LazySpec
 return {
   {
@@ -32,6 +73,16 @@ return {
       config = {
         marksman = {
           on_attach = function()
+            utils.set_mappings {
+              n = {
+                ["<Leader>lt"] = { desc = "Markdown TOC" },
+                ["<Leader>ltg"] = {
+                  function() gen_toc(vim.api.nvim_win_get_cursor(0)[1] - 1, vim.api.nvim_win_get_cursor(0)[1] - 1) end,
+                  desc = "Markdown Generate TOC",
+                },
+                ["<Leader>ltu"] = { update_toc, desc = "Markdown Update TOC" },
+              },
+            }
             if utils.is_available "markdown-preview.nvim" then
               utils.set_mappings({
                 n = {
@@ -93,7 +144,7 @@ return {
   {
     "iamcco/markdown-preview.nvim",
     cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
-    build = "cd app && yarn install",
+    build = "cd app && npm install",
     init = function() vim.g.mkdp_filetypes = { "markdown" } end,
     ft = { "markdown" },
   },

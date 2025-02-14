@@ -1,36 +1,34 @@
 # AstroNvimV4 Config
 
-<!--toc:start-->
+<!-- markdown toc:start -->
 
-- [AstroNvimV4 Config](#astronvimv4-config)
-  - [Support neovim version](#support-neovim-version)
-  - [Features](#features)
-  - [workflow screenshot](#workflow-screenshot)
-  - [other components config](#other-components-config)
-  - [🛠️ Installation](#️-installation)
-    - [The system should supports commands](#the-system-should-supports-commands)
-    - [Recommend install](#recommend-install)
-    - [Note: for rust development](#note-for-rust-development)
-    - [Make a backup of your current nvim and shared folder](#make-a-backup-of-your-current-nvim-and-shared-folder)
-    - [Create a new user repository from this template](#create-a-new-user-repository-from-this-template)
-    - [Clone the repository](#clone-the-repository)
-    - [Start Neovim](#start-neovim)
-  - [Tips](#tips)
-    - [NVcheatsheet](#nvcheatsheet)
-    - [Use Lazygit](#use-lazygit)
-    - [Install unimatrix](#install-unimatrix)
-    - [Install TTE](#install-tte)
-    - [Install Bottom](#install-bottom)
-    - [Neovim requirements](#neovim-requirements)
-    - [Markdown Image Paste](#markdown-image-paste)
-    - [Input Auto Switch](#input-auto-switch)
-    - [Support for neovide](#support-for-neovide)
-    - [Support Lazydocker](#support-lazydocker)
-  - [General Mappings](#general-mappings)
-  - [NOTE](#note)
-    - [_vim.lsp.buf.hover()_ `KK` jump into signature help float window](#vimlspbufhover-kk-jump-into-signature-help-float-window)
-  - [Project workspace setup](#project-workspace-setup)
-  <!--toc:end-->
+- [Support neovim version](#Support-neovim-version)
+- [Features](#Features)
+- [workflow screenshot](#workflow-screenshot)
+- [other components config](#other-components-config)
+- [🛠️ Installation](#🛠️-Installation)
+  - [The system should supports commands](#The-system-should-supports-commands)
+  - [Recommend install](#Recommend-install)
+  - [Note: for rust development](#Note:-for-rust-development)
+  - [Make a backup of your current nvim and shared folder](#Make-a-backup-of-your-current-nvim-and-shared-folder)
+  - [Create a new user repository from this template](#Create-a-new-user-repository-from-this-template)
+  - [Clone the repository](#Clone-the-repository)
+  - [Start Neovim](#Start-Neovim)
+- [Tips](#Tips)
+  - [NVcheatsheet](#NVcheatsheet)
+  - [Use Lazygit](#Use-Lazygit)
+  - [Install unimatrix](#Install-unimatrix)
+  - [Install TTE](#Install-TTE)
+  - [Install Bottom](#Install-Bottom)
+  - [Neovim requirements](#Neovim-requirements)
+  - [Markdown Image Paste](#Markdown-Image-Paste)
+  - [Input Auto Switch](#Input-Auto-Switch)
+  - [Support for neovide](#Support-for-neovide)
+  - [Support Lazydocker](#Support-Lazydocker)
+- [General Mappings](#General-Mappings)
+  - [`KK`](#`KK`)
+- [Project workspace setup](#Project-workspace-setup)
+<!-- markdown toc:stop  -->
 
 **NOTE:** This is the latest v4 configuration.
 
@@ -87,11 +85,11 @@ now,this config supports development in `TypeScript`,`Python`,`Go`,`Rust` and `m
 
 `npm`,`rustc`,`go`
 
+### Recommend install
+
+rust toolchain:
 `yay -S rustup`
 `rustup default stable`
-`yay -S go`
-
-### Recommend install
 
 go toolchain:
 `yay -S go`
@@ -312,7 +310,9 @@ Copilot Mappings
 | Open chat panel          | <kbd>Leader+n+c</kbd> | n    |
 | Accept inline suggestion | <kbd>Ctrl+.</kbd>     | n    |
 
-### _vim.lsp.buf.hover()_ `KK` jump into signature help float window
+### `KK`
+
+_vim.lsp.buf.hover()_ `KK` jump into signature help float window
 
 > Displays hover information about the symbol under the cursor in a floating window. Calling the function twice will jump into the floating window.
 
