@@ -1,5 +1,5 @@
 return {
-  "keaising/im-select.nvim",
+  "PongKj/im-select.nvim",
   lazy = false,
   opts = {
     -- default_main_select = "com.sogou.inputmethod.sogou.pinyin",
