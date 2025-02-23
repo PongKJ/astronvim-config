@@ -166,7 +166,9 @@ return {
       "nvim-tree/nvim-web-devicons",
     },
     opts = {
-      hybrid_modes = { "n" },
+      preview = {
+        hybrid_modes = { "n" },
+      },
     },
   },
 }
