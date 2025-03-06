@@ -20,11 +20,32 @@ return {
   {
     "karb94/neoscroll.nvim",
     event = "VeryLazy",
-    opts = { mappings = {
-      "<C-b>",
-      "<C-f>",
-      "<C-y>",
-      "<C-e>",
-    } },
+    opts = {
+      mappings = {
+        "<C-b>",
+        "<C-f>",
+        "<C-y>",
+        "<C-e>",
+      },
+    },
+  },
+  {
+    "petertriho/nvim-scrollbar",
+    event = "VeryLazy",
+    config = function()
+      require("scrollbar").setup {
+        handle = {
+          color = "#555555",
+        },
+        marks = {
+          Search = { color = "#00FF00" },
+          Error = { color = "#FF0000" },
+          Warn = { color = "#FFA500" },
+          Info = { color = "#00FFFF" },
+          Hint = { color = "#FF00FF" },
+          Misc = { color = "#FFFF00" },
+        },
+      }
+    end,
   },
 }

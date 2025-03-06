@@ -31,3 +31,5 @@
 
 # 修复c/c++项目弹出signature help时,光标移动到signature上的问题
 > astronvim 与 noice.nvim插件的signature冲突导致,关闭astronvim的signature help,问题解决
+
+# 使用Session reload, cwd()仍然为启动nvim的目录问题导致dotfile find错误
