@@ -409,7 +409,7 @@ function M.detect_files_in_paths(file_list, path_list)
       if M.file_exists(full_path) then return full_path end
     end
   end
-  assert(false, "No file found in paths")
+  vim.notify("File:" .. vim.inspect(file_list) .. " not found", vim.log.levels.WARN)
 end
 
 function M.detect_workspace_type()
