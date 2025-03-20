@@ -1,26 +1,14 @@
 local overseer = require "overseer"
-local cmake = require "cmake-tools"
 
 return {
   -- Required fields
   name = "run",
   builder = function()
-    local env_file = cmake.get_build_directory()
-      .. "/conan/build/"
-      .. cmake.get_build_type()
-      .. "/generators/conanrun.sh"
-    local useConan = require("utils").detect_files_in_paths({ "conanfile.py", "conanfile.txt" }, { vim.fn.getcwd() })
-
-    local target = cmake.get_launch_target_path()
-    local launch_args = cmake.get_launch_args()
-    local args = { "-c", target .. " " .. table.concat(launch_args, " ") }
-    if useConan then
-      args = { "-c", "source " .. env_file .. " && " .. target .. " " .. table.concat(launch_args, " ") }
-    end
+    local args = { "project.mts", "run" }
     --- @type overseer.TaskDefinition
     return {
       -- cmd is the only required field
-      cmd = { "bash" },
+      cmd = { "tsx" },
       -- additional arguments for the cmd
       args = args,
       -- the name of the task (defaults to the cmd of the task)
@@ -44,6 +32,6 @@ return {
   -- All fields are optional.
   condition = {
     -- Arbitrary logic for determining if task is available
-    callback = function() return cmake.is_cmake_project() end,
+    -- callback = function() return .is_cmake_project() end,
   },
 }

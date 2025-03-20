@@ -128,7 +128,7 @@ return {
         local markdownlint_diagnostics_buildins = null_ls.builtins.diagnostics.markdownlint
         local config_file = require("utils").detect_files_in_paths(
           { ".markdownlint.jsonc", ".markdownlint.json" },
-          { vim.fn.getcwd(), vim.fn.stdpath "config" .. "/dotfiles" }
+          { vim.fn.getcwd(), vim.fn.stdpath "config" .. "/templates" }
         )
         if config_file then
           table.insert(markdownlint_diagnostics_buildins._opts.args, "--config")

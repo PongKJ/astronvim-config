@@ -65,7 +65,7 @@ return {
   --   },
   --   opts = function(_, opts)
   --     opts.debug = true
-  --     local global_config = vim.fn.stdpath "config" .. "/dotfiles"
+  --     local global_config = vim.fn.stdpath "config" .. "/templates"
   --     local user_config = vim.fn.getcwd()
   --     local rustfmt_args = {}
   --
@@ -123,7 +123,7 @@ return {
                 },
               },
               rustfmt = {
-                extraArgs = { "--config-path", vim.fn.stdpath "config" .. "/dotfiles/rustfmt.toml" },
+                extraArgs = { "--config-path", vim.fn.stdpath "config" .. "/templates/rustfmt.toml" },
               },
               -- Add clippy lints for Rust.
               checkOnSave = {

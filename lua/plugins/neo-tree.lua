@@ -329,7 +329,7 @@ return {
           },
           filtered_items = {
             always_show = { ".github", ".gitignore" },
-            hide_dotfiles = false,
+            hide_templates = false,
             hide_gitignored = false,
             hide_by_name = {
               ".git",

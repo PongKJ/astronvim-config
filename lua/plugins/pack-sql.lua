@@ -2,7 +2,7 @@ local utils = require "astrocore"
 local set_mappings = utils.set_mappings
 
 local function create_sqlfluff_config_file()
-  local source_file = vim.fn.stdpath "config" .. "/dotfiles/.sqlfluff"
+  local source_file = vim.fn.stdpath "config" .. "/templates/.sqlfluff"
   local target_file = vim.fn.getcwd() .. "/.sqlfluff"
   require("utils").copy_file(source_file, target_file)
 end
@@ -57,7 +57,7 @@ return {
         local buf_diagnostics_buildins = null_ls.builtins.diagnostics.sqlfluff
         local config_file = require("utils").detect_files_in_paths(
           { ".sqlfluff", "sqlfluff" },
-          { vim.fn.getcwd(), vim.fn.stdpath "config" .. "/dotfiles" }
+          { vim.fn.getcwd(), vim.fn.stdpath "config" .. "/templates" }
         )
         if config_file then
           table.insert(buf_diagnostics_buildins._opts.args, "--config")

@@ -3,13 +3,13 @@ local file_exists = require("utils").file_exists
 local utils = require "utils"
 
 local function create_buf_config_file()
-  local source_file = vim.fn.stdpath "config" .. "/dotfiles/buf.yaml"
+  local source_file = vim.fn.stdpath "config" .. "/templates/buf.yaml"
   local target_file = vim.fn.getcwd() .. "/buf.yaml"
   utils.copy_file(source_file, target_file)
 end
 
 local function create_buf_gen_config_file()
-  local source_file = vim.fn.stdpath "config" .. "/dotfiles/buf.gen.yaml"
+  local source_file = vim.fn.stdpath "config" .. "/templates/buf.gen.yaml"
   local target_file = vim.fn.getcwd() .. "/buf.gen.yaml"
   utils.copy_file(source_file, target_file)
 end
@@ -19,7 +19,7 @@ local function diagnostic_auto_import_config()
   local buf_buildins = null_ls.builtins.formatting.buf
   local config_file = require("utils").detect_files_in_paths(
     { ".buf.yaml", "buf.yaml" },
-    { vim.fn.getcwd(), vim.fn.stdpath "config" .. "/dotfiles" }
+    { vim.fn.getcwd(), vim.fn.stdpath "config" .. "/templates" }
   )
   if config_file then
     table.insert(buf_buildins._opts.args, "--config")
@@ -35,7 +35,7 @@ local function formatting_auto_import_config()
 
   local config_file = require("utils").detect_files_in_paths(
     { ".buf.yaml", "buf.yaml" },
-    { vim.fn.getcwd(), vim.fn.stdpath "config" .. "/dotfiles" }
+    { vim.fn.getcwd(), vim.fn.stdpath "config" .. "/templates" }
   )
   if config_file then
     table.insert(buf_buildins._opts.args, "--config")

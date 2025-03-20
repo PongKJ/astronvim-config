@@ -133,6 +133,9 @@ mercurial:
 xxd:
 `yay -S xxd`
 
+trash-cli:
+`sudo pacman -S trash-cli`
+
 ```
 pip install notebook nbclassic jupyter-console
 pip install git+https://github.com/will8211/unimatrix.git

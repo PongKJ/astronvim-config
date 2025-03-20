@@ -1,6 +1,18 @@
 -- TODO: Move some functions to specified file
 local M = {}
 
+function M.save_table_as_json(tbl, file_path)
+  local json = vim.fn.json_encode(tbl)
+  local file = io.open(file_path, "w")
+  if not file then
+    vim.notify("Unable to open file: " .. file_path, vim.log.levels.ERROR)
+    return
+  end
+  file:write(json)
+  file:close()
+  vim.notify("Table saved as JSON to: " .. file_path, vim.log.levels.INFO)
+end
+
 function M.decode_json(filename)
   -- Open the file in read mode
   local file = io.open(filename, "r")
@@ -462,6 +474,12 @@ function M.is_file_binary_post_read()
   local encoding = (vim.bo.fenc ~= "" and vim.bo.fenc) or vim.o.enc
   if encoding ~= "utf-8" then return true end
   return false
+end
+
+--- generate a '.nvim' directory under project root,
+--- just like '.vscode' for vscode, keeps project specific settings
+function M.generate_workspace_config()
+
 end
 
 return M

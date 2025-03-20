@@ -17,7 +17,7 @@ return {
     optional = true,
     opts = function(_, opts)
       -- local clang_format_config
-      -- local global_clang_format_config = vim.fn.stdpath "config" .. "/dotfiles/.clang-format"
+      -- local global_clang_format_config = vim.fn.stdpath "config" .. "/templates/.clang-format"
       -- local user_clang_format_config = vim.fn.getcwd() .. "/.clang-format"
       -- if require("utils").file_exists(user_clang_format_config) then
       --   clang_format_config = user_clang_format_config
@@ -90,7 +90,7 @@ return {
     opts = function(_, opts)
       opts.debug = true
       local null_ls = require "null-ls"
-      local global_config = vim.fn.stdpath "config" .. "/dotfiles"
+      local global_config = vim.fn.stdpath "config" .. "/templates"
       local user_config = vim.fn.getcwd()
       local clang_format_args = {}
       local clazy_args = {}
@@ -101,7 +101,7 @@ return {
       -- Since we know that the file exists, we can safely use it without checking
       utils.list_insert_unique(clang_format_args, { "-style=file:" .. path })
       path = require("utils").detect_files_in_paths({ ".clazy.yaml" }, { user_config, global_config })
-      local checks = io.popen("cat /home/pkj/.config/nvim/dotfiles/.clazy.yaml | tr -d ' ' | tr '\n' ','"):read "*a"
+      local checks = io.popen("cat /home/pkj/.config/nvim/templates/.clazy.yaml | tr -d ' ' | tr '\n' ','"):read "*a"
       checks = checks:gsub("%s+", "") -- Remove any remaining whitespace
       utils.list_insert_unique(clazy_args, { "-checks=" .. checks })
       path = require("utils").detect_files_in_paths(

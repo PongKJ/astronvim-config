@@ -5,64 +5,73 @@ return {
   ---@param opts AstroCoreOpts
   opts = function(_, opts)
     if not opts.mappings then opts.mappings = require("astrocore").empty_map_table() end
+    -- TODO: Move workspace_type to other place
     local workspace_type = require("utils").detect_workspace_type()
     local overseer = require "overseer"
     vim.notify("Workspace Type:" .. workspace_type .. "", vim.log.levels.INFO)
     local maps = opts.mappings
     if maps then
       if workspace_type == "c/c++" then
+        -- TODO: Not hardcode this commands
         maps.n["<Leader>ns"] = { "<Cmd>ClangdSwitchSourceHeader<CR>", desc = "Switch between source and header" }
-        maps.n["<Leader>c"] = { "", desc = "Cmake tasks" }
+        maps.n["<Leader>c"] = { "", desc = "C/Cpp tasks" }
+        maps.n["<Leader>cs"] = { "", desc = "Target specify" }
         maps.n["<Leader>cr"] = {
-          function()
-            overseer = require "overseer"
-            overseer.run_template { tags = { overseer.TAG.RUN } }
-          end,
+          function() require("overseer").run_template { tags = { overseer.TAG.RUN }, reuse_termnal = true } end,
           desc = "Run",
         }
-        maps.n["<Leader>cs"] = { "", desc = "Target settings" }
-        maps.n["<Leader>csa"] = {
+        maps.n["<Leader>csr"] = {
           function()
-            local inputs = require "neo-tree.ui.inputs"
-            local msg = "Input args split by space:"
-            inputs.input(msg, "", function(args)
-              if args == "" then return end
-              vim.cmd("CMakeLaunchArgs " .. args)
+            vim.ui.input({ prompt = "target to run:" }, function(target)
+              if target then
+                -- vim.cmd("TermExec cmd='tsx project.mts run " .. target .. "'")
+                require("toggleterm").exec("tsx project.mts run " .. target)
+              else
+                vim.notify("No target specified, run last target", vim.log.levels.INFO)
+              end
             end)
           end,
-          desc = "Set Launch Args",
+          desc = "Run specific target",
         }
-        maps.n["<Leader>csr"] = { "<Cmd>CMakeSelectLaunchTarget<CR>", desc = "Select Launch Target" }
-        maps.n["<Leader>cg"] = {
-          "<Cmd>CMakeGenerate<CR>",
-          desc = "Generate",
+        maps.n["<Leader>cc"] = {
+          "<Cmd>TermExec cmd='tsx project.mts config'<CR>",
+          desc = "Cmake config",
         }
-        maps.n["<Leader>cb"] = { "<Cmd>CMakeBuild<CR>", desc = "Build" }
-        maps.n["<Leader>csb"] = { "<Cmd>CMakeSelectBuildTarget<CR>", desc = "Select Build Target" }
-        maps.n["<Leader>ct"] = { "<Cmd>CMakeRunTest<CR>", desc = "Test" }
-        maps.n["<Leader>cd"] = { "<Cmd>CMakeDebug<CR>", desc = "Debug" }
-        maps.n["<Leader>cc"] = { "<Cmd>CMakeClean<CR>", desc = "Clean" }
+        maps.n["<Leader>cb"] = { "<Cmd>TermExec cmd='tsx project.mts build'<CR>", desc = "Build target" }
+        maps.n["<Leader>csb"] = {
+          function()
+            vim.ui.input({ prompt = "target to build:" }, function(target)
+              if target then
+                vim.cmd("TermExec cmd='tsx project.mts build " .. target .. "'")
+              else
+                vim.notify("No target specified, build last target", vim.log.levels.INFO)
+              end
+            end)
+          end,
+          desc = "Build specific target",
+        }
+        maps.n["<Leader>ct"] = { "<Cmd>TermExec cmd='tsx project.mts test'<CR>", desc = "Test" }
+        maps.n["<Leader>cd"] = { "<Cmd>akeDebug<CR>", desc = "Debug" }
         maps.n["<F5>"] = { "<cmd>CMakeDebug<CR>", desc = "Start Debug" }
-      elseif workspace_type == "rust" or workspace_type == "python" or workspace_type == "frontend" then
-        if workspace_type == "rust" then
-          maps.n["<Leader>c"] = { "", desc = "Cargo tasks" }
-          maps.n["<Leader>cs"] = { "", desc = "Select Target" }
-          maps.n["<F5>"] = { "<Cmd>RustLsp! debuggables<CR>", desc = "Start Debug" }
-          maps.n["<Leader>cd"] = { "<CMd>RustLsp! debuggables<CR>", desc = "Debug" }
-          maps.n["<Leader>csd"] = { "<Cmd>RustLsp debuggables<CR>", desc = "Select Debug Target" }
-          maps.n["<Leader>cb"] = {
-            function() overseer.run_template { tags = { overseer.TAG.BUILD } } end,
-            desc = "Build",
-          }
-          maps.n["<Leader>cr"] = { "<Cmd>RustLsp! runnables<CR>", desc = "Run" }
-          maps.n["<Leader>csr"] = { "<Cmd>RustLsp runnables<CR>", desc = "Select Run Target" }
-        elseif workspace_type == "python" then
-          maps.n["<Leader>c"] = { "", desc = "Python tasks" }
-          -- TODO: Add python tasks
-        elseif workspace_type == "frontend" then
-          maps.n["<Leader>c"] = { "", desc = "Frontend tasks" }
-          maps.n["<Leader>cr"] = { "<Cmd>OverseerRun<CR>", desc = "Run" }
-        end
+      end
+      if workspace_type == "rust" then
+        maps.n["<Leader>c"] = { "", desc = "Cargo tasks" }
+        maps.n["<Leader>cs"] = { "", desc = "Select Target" }
+        maps.n["<F5>"] = { "<Cmd>RustLsp! debuggables<CR>", desc = "Start Debug" }
+        maps.n["<Leader>cd"] = { "<CMd>RustLsp! debuggables<CR>", desc = "Debug" }
+        maps.n["<Leader>csd"] = { "<Cmd>RustLsp debuggables<CR>", desc = "Select Debug Target" }
+        maps.n["<Leader>cb"] = {
+          function() overseer.run_template { tags = { overseer.TAG.BUILD } } end,
+          desc = "Build",
+        }
+        maps.n["<Leader>cr"] = { "<Cmd>RustLsp! runnables<CR>", desc = "Run" }
+        maps.n["<Leader>csr"] = { "<Cmd>RustLsp runnables<CR>", desc = "Select Run Target" }
+      elseif workspace_type == "python" then
+        maps.n["<Leader>c"] = { "", desc = "Python tasks" }
+        -- TODO: Add python tasks
+      elseif workspace_type == "frontend" then
+        maps.n["<Leader>c"] = { "", desc = "Frontend tasks" }
+        maps.n["<Leader>cr"] = { "<Cmd>OverseerRun<CR>", desc = "Run" }
       end
 
       -- term mode mappings
