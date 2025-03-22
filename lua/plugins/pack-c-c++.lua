@@ -16,14 +16,6 @@ return {
     ft = { "c", "cpp", "cmake" },
     optional = true,
     opts = function(_, opts)
-      -- local clang_format_config
-      -- local global_clang_format_config = vim.fn.stdpath "config" .. "/templates/.clang-format"
-      -- local user_clang_format_config = vim.fn.getcwd() .. "/.clang-format"
-      -- if require("utils").file_exists(user_clang_format_config) then
-      --   clang_format_config = user_clang_format_config
-      -- else
-      --   clang_format_config = global_clang_format_config
-      -- end
       local extra_args = {
         "--clang-tidy",
         "--background-index",
@@ -33,18 +25,12 @@ return {
         "--pch-storage=disk",
         "--all-scopes-completion",
         "--header-insertion-decorators",
-        -- INFO:Clangd will supports this option soon,bu not yet,currently we use
-        -- clang-format
-        -- "-style=file:" .. clang_format_config,
+        "--experimental-modules-support",
+        "--function-arg-placeholders=false",
       }
 
       if require("utils").detect_workspace_type() == "c/c++" then
-        local cwd = vim.fn.getcwd()
-        -- TODO: Add more possible paths to search for compile_commands.json
-        local compile_commands = require("utils").detect_files_in_paths(
-          { "compile_commands.json" },
-          { cwd .. "/build", cwd }
-        )
+        local compile_commands = require("helper.file").detect_file_in_paths("compile_commands.json", vim.fn.getcwd())
         if compile_commands then
           utils.list_insert_unique(extra_args, { "--compile-commands-dir", compile_commands })
         end
@@ -83,67 +69,67 @@ return {
         require("astrocore").list_insert_unique(opts.ensure_installed, { "clang-format", "cmakelang" })
     end,
   },
+  -- {
+  --   "CWndpkj/none-ls.nvim",
+  --   optional = true,
+  --   ft = { "c", "cpp", "cmake" },
+  --   opts = function(_, opts)
+  --     opts.debug = true
+  --     local null_ls = require "null-ls"
+  --     local global_config = vim.fn.stdpath "config" .. "/templates"
+  --     local user_config = vim.fn.getcwd()
+  --     local clang_format_args = {}
+  --     local clazy_args = {}
+  --     local cmake_format_args = {}
+  --     local cmake_lint_args = {}
+  --
+  --     local path = require("helper.file").detect_file_in_paths(".clang-format" , { user_config, global_config })
+  --     -- Since we know that the file exists, we can safely use it without checking
+  --     utils.list_insert_unique(clang_format_args, { "-style=file:" .. path })
+  --     path = require("utils").detect_files_in_paths({ ".clazy.yaml" }, { user_config, global_config })
+  --     local checks = io.popen("cat /home/pkj/.config/nvim/templates/.clazy.yaml | tr -d ' ' | tr '\n' ','"):read "*a"
+  --     checks = checks:gsub("%s+", "") -- Remove any remaining whitespace
+  --     utils.list_insert_unique(clazy_args, { "-checks=" .. checks })
+  --     path = require("utils").detect_files_in_paths(
+  --       { ".cmake-format.yaml", "cmake-format.py" },
+  --       { user_config, global_config }
+  --     )
+  --     utils.list_insert_unique(cmake_format_args, { "-c", path })
+  --     -- HACK: cmake_format need '-l error' to work?,and it must be append
+  --     -- after '-c' option, otherwise it has no effect
+  --     utils.list_insert_unique(cmake_format_args, { "-l", "error" })
+  --     path = require("utils").detect_files_in_paths({ ".cmakelintrc" }, { user_config, global_config })
+  --     utils.list_insert_unique(cmake_lint_args, { "--config=" .. path })
+  --
+  --     if require("utils").detect_workspace_type() == "c/c++" then
+  --       -- TODO: Add more possible paths to search for compile_commands.json
+  --       path = require("utils").detect_files_in_paths(
+  --         { "compile_commands.json" },
+  --         { user_config .. "/build", user_config }
+  --       )
+  --       if path then utils.list_insert_unique(clazy_args, { "-p", path }) end
+  --     end
+  --
+  --     if not opts.sources then opts.sources = {} end
+  --     opts.sources = vim.list_extend(opts.sources, {
+  --       null_ls.builtins.formatting.clang_format.with {
+  --         extra_args = clang_format_args,
+  --       },
+  --       -- NOTE: clazy-standalone need be installed manually
+  --       null_ls.builtins.diagnostics.clazy.with {
+  --         extra_args = clazy_args,
+  --       },
+  --       null_ls.builtins.formatting.cmake_format.with {
+  --         extra_args = cmake_format_args,
+  --       },
+  --       null_ls.builtins.diagnostics.cmake_lint.with {
+  --         extra_args = cmake_lint_args,
+  --       },
+  --     })
+  --   end,
+  -- },
   {
-    "CWndpkj/none-ls.nvim",
-    optional = true,
-    ft = { "c", "cpp", "cmake" },
-    opts = function(_, opts)
-      opts.debug = true
-      local null_ls = require "null-ls"
-      local global_config = vim.fn.stdpath "config" .. "/templates"
-      local user_config = vim.fn.getcwd()
-      local clang_format_args = {}
-      local clazy_args = {}
-      local cmake_format_args = {}
-      local cmake_lint_args = {}
-
-      local path = require("utils").detect_files_in_paths({ ".clang-format" }, { user_config, global_config })
-      -- Since we know that the file exists, we can safely use it without checking
-      utils.list_insert_unique(clang_format_args, { "-style=file:" .. path })
-      path = require("utils").detect_files_in_paths({ ".clazy.yaml" }, { user_config, global_config })
-      local checks = io.popen("cat /home/pkj/.config/nvim/templates/.clazy.yaml | tr -d ' ' | tr '\n' ','"):read "*a"
-      checks = checks:gsub("%s+", "") -- Remove any remaining whitespace
-      utils.list_insert_unique(clazy_args, { "-checks=" .. checks })
-      path = require("utils").detect_files_in_paths(
-        { ".cmake-format.yaml", "cmake-format.py" },
-        { user_config, global_config }
-      )
-      utils.list_insert_unique(cmake_format_args, { "-c", path })
-      -- HACK: cmake_format need '-l error' to work?,and it must be append
-      -- after '-c' option, otherwise it has no effect
-      utils.list_insert_unique(cmake_format_args, { "-l", "error" })
-      path = require("utils").detect_files_in_paths({ ".cmakelintrc" }, { user_config, global_config })
-      utils.list_insert_unique(cmake_lint_args, { "--config=" .. path })
-
-      if require("utils").detect_workspace_type() == "c/c++" then
-        -- TODO: Add more possible paths to search for compile_commands.json
-        path = require("utils").detect_files_in_paths(
-          { "compile_commands.json" },
-          { user_config .. "/build", user_config }
-        )
-        if path then utils.list_insert_unique(clazy_args, { "-p", path }) end
-      end
-
-      if not opts.sources then opts.sources = {} end
-      opts.sources = vim.list_extend(opts.sources, {
-        null_ls.builtins.formatting.clang_format.with {
-          extra_args = clang_format_args,
-        },
-        -- NOTE: clazy-standalone need be installed manually
-        null_ls.builtins.diagnostics.clazy.with {
-          extra_args = clazy_args,
-        },
-        null_ls.builtins.formatting.cmake_format.with {
-          extra_args = cmake_format_args,
-        },
-        null_ls.builtins.diagnostics.cmake_lint.with {
-          extra_args = cmake_lint_args,
-        },
-      })
-    end,
-  },
-  {
-    "jay-babu/mason-nvim-dap.nvim",
+    "PongKJ/mason-nvim-dap.nvim",
     opts = function(_, opts)
       -- dap
       opts.ensure_installed = utils.list_insert_unique(opts.ensure_installed, { "codelldb" })

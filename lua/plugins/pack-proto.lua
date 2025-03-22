@@ -17,14 +17,14 @@ end
 local function diagnostic_auto_import_config()
   local null_ls = require "null-ls"
   local buf_buildins = null_ls.builtins.formatting.buf
-  local config_file = require("utils").detect_files_in_paths(
-    { ".buf.yaml", "buf.yaml" },
-    { vim.fn.getcwd(), vim.fn.stdpath "config" .. "/templates" }
-  )
-  if config_file then
-    table.insert(buf_buildins._opts.args, "--config")
-    table.insert(buf_buildins._opts.args, config_file)
-  end
+  -- local config_file = require("utils").detect_files_in_paths(
+  --   { ".buf.yaml", "buf.yaml" },
+  --   { vim.fn.getcwd(), vim.fn.stdpath "config" .. "/templates" }
+  -- )
+  -- if config_file then
+  --   table.insert(buf_buildins._opts.args, "--config")
+  --   table.insert(buf_buildins._opts.args, config_file)
+  -- end
 
   null_ls.register(null_ls.builtins.formatting.buf.with(buf_buildins))
 end
@@ -33,14 +33,14 @@ local function formatting_auto_import_config()
   local null_ls = require "null-ls"
   local buf_buildins = null_ls.builtins.diagnostics.buf
 
-  local config_file = require("utils").detect_files_in_paths(
-    { ".buf.yaml", "buf.yaml" },
-    { vim.fn.getcwd(), vim.fn.stdpath "config" .. "/templates" }
-  )
-  if config_file then
-    table.insert(buf_buildins._opts.args, "--config")
-    table.insert(buf_buildins._opts.args, config_file)
-  end
+  -- local config_file = require("utils").detect_files_in_paths(
+  --   { ".buf.yaml", "buf.yaml" },
+  --   { vim.fn.getcwd(), vim.fn.stdpath "config" .. "/templates" }
+  -- )
+  -- if config_file then
+  --   table.insert(buf_buildins._opts.args, "--config")
+  --   table.insert(buf_buildins._opts.args, config_file)
+  -- end
   null_ls.register(null_ls.builtins.diagnostics.buf.with(buf_buildins))
 end
 

@@ -3,6 +3,6 @@ return {
   lazy = true,
   priority = 1000,
   opts = {
-    style = 'warmer'
-  }
+    style = "warmer",
+  },
 }

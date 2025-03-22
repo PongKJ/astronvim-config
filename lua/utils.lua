@@ -1,5 +1,11 @@
--- TODO: Move some functions to specified file
+-- TODO: Load functions from helper module
 local M = {}
+local astrocore = require "astrocore"
+M = astrocore.extend_tbl(M, require "helper.3rd")
+M = astrocore.extend_tbl(M, require "helper.file")
+M = astrocore.extend_tbl(M, require "helper.json")
+M = astrocore.extend_tbl(M, require "helper.os")
+M = astrocore.extend_tbl(M, require "helper.workspace")
 
 function M.save_table_as_json(tbl, file_path)
   local json = vim.fn.json_encode(tbl)
@@ -13,97 +19,11 @@ function M.save_table_as_json(tbl, file_path)
   vim.notify("Table saved as JSON to: " .. file_path, vim.log.levels.INFO)
 end
 
-function M.decode_json(filename)
-  -- Open the file in read mode
-  local file = io.open(filename, "r")
-  if not file then
-    return false -- File doesn't exist or cannot be opened
-  end
-
-  -- Read the contents of the file
-  local content = file:read "*all"
-  file:close()
-
-  -- Parse the JSON content
-  local json_parsed, json = pcall(vim.fn.json_decode, content)
-  if not json_parsed or type(json) ~= "table" then
-    return false -- Invalid JSON format
-  end
-  return json
-end
-
-function M.check_json_key_exists(json, ...) return vim.tbl_get(json, ...) ~= nil end
-
-function M.is_vue_project(bufnr)
-  local lsp_rooter
-  if type(bufnr) ~= "number" then bufnr = vim.api.nvim_get_current_buf() end
-  local rooter = require "astrocore.rooter"
-  if not lsp_rooter then
-    lsp_rooter = rooter.resolve("lsp", {
-      ignore = {
-        servers = function(client)
-          return not vim.tbl_contains({ "vtsls", "typescript-tools", "volar", "eslint", "tsserver" }, client.name)
-        end,
-      },
-    })
-  end
-
-  local vue_dependency = false
-  for _, root in ipairs(require("astrocore").list_insert_unique(lsp_rooter(bufnr), { vim.fn.getcwd() })) do
-    local package_json = M.decode_json(root .. "/package.json")
-    if
-      package_json
-      and (
-        M.check_json_key_exists(package_json, "dependencies", "vue")
-        or M.check_json_key_exists(package_json, "devDependencies", "vue")
-      )
-    then
-      vue_dependency = true
-      break
-    end
-  end
-
-  return vue_dependency
-end
-
 function M.is_in_list(value, list)
   for i = 1, #list do
     if list[i] == value then return true end
   end
   return false
-end
-
-function M.get_parent_dir(path) return path:match "(.+)/" end
-
-function M.copy_file(source_file, target_file)
-  local target_file_parent_path = M.get_parent_dir(target_file)
-  local cmd = string.format("mkdir -p %s", vim.fn.shellescape(target_file_parent_path))
-  os.execute(cmd)
-  cmd = string.format("cp %s %s", vim.fn.shellescape(source_file), vim.fn.shellescape(target_file))
-  os.execute(cmd)
-
-  vim.notify("File " .. target_file .. " created success.", vim.log.levels.INFO)
-end
-
-function M.get_filename_with_extension_from_path(path) return string.match(path, "([^/]+)$") end
-
-function M.create_launch_json()
-  vim.ui.select({
-    "go",
-  }, { prompt = "Select Language Debug Template", default = "go" }, function(select)
-    if not select then return end
-    if select == "go" then
-      local source_file = vim.fn.stdpath "config" .. "/.vscode/go_launch.json"
-      local target_file = vim.fn.getcwd() .. "/.vscode/launch.json"
-      local file_exist = M.file_exists(target_file)
-      if file_exist then
-        local confirm = vim.fn.confirm("File `.vscode/launch.json` Exist, Overwrite it?", "&Yes\n&No", 1, "Question")
-        if confirm == 1 then M.copy_file(source_file, target_file) end
-      else
-        M.copy_file(source_file, target_file)
-      end
-    end
-  end)
 end
 
 function M.remove_lsp_cwd(path, client_name)
@@ -123,16 +43,6 @@ function M.remove_cwd(path)
 end
 
 function M.escape_pattern(text) return text:gsub("([^%w])", "%%%1") end
-
-function M.file_exists(path)
-  local file = io.open(path, "r")
-  if file then
-    io.close(file)
-    return true
-  else
-    return false
-  end
-end
 
 function M.get_lsp_root_dir(client_name)
   local clients = vim.lsp.get_clients()
@@ -167,6 +77,7 @@ function M.save_client(client)
   end
 end
 
+-- WARN: Decreapted
 function M.extend(t, key, values)
   local keys = vim.split(key, ".", { plain = true })
   for i = 1, #keys do
@@ -197,17 +108,6 @@ function M.yaml_ft(path, bufnr)
   end
 end
 
-function M.write_to_file(content, file_path)
-  local file = io.open(file_path, "a")
-  if not file then
-    vim.notify("Unable to open file: " .. file_path, vim.log.levels.ERROR)
-    return
-  end
-  file:write(vim.inspect(content))
-  file:write "\n"
-  file:close()
-end
-
 function M.better_search(key)
   return function()
     local searched, error =
@@ -220,56 +120,6 @@ function M.remove_keymap(mode, key)
   for _, map in pairs(vim.api.nvim_get_keymap(mode)) do
     ---@diagnostic disable-next-line: undefined-field
     if map.lhs == key then vim.api.nvim_del_keymap(mode, key) end
-  end
-end
-
-function M.toggle_lazy_docker()
-  return function()
-    require("astrocore").toggle_term_cmd {
-      cmd = "lazydocker",
-      direction = "float",
-      hidden = true,
-      on_open = function() M.remove_keymap("t", "<Esc>") end,
-      on_close = function() vim.api.nvim_set_keymap("t", "<Esc>", [[<C-\><C-n>]], { silent = true, noremap = true }) end,
-      on_exit = function()
-        -- For Stop Term Mode
-        vim.cmd [[stopinsert]]
-      end,
-    }
-  end
-end
-
-function M.toggle_btm()
-  return function()
-    require("astrocore").toggle_term_cmd {
-      cmd = "btm",
-      direction = "float",
-      hidden = true,
-      on_open = function() M.remove_keymap("t", "<Esc>") end,
-      on_close = function() vim.api.nvim_set_keymap("t", "<Esc>", [[<C-\><C-n>]], { silent = true, noremap = true }) end,
-      on_exit = function()
-        -- For Stop Term Mode
-        vim.cmd [[stopinsert]]
-      end,
-    }
-  end
-end
-
-function M.toggle_lazy_git()
-  return function()
-    local worktree = require("astrocore").file_worktree()
-    local flags = worktree and (" --work-tree=%s --git-dir=%s"):format(worktree.toplevel, worktree.gitdir) or ""
-    require("astrocore").toggle_term_cmd {
-      cmd = "lazygit " .. flags,
-      direction = "float",
-      hidden = true,
-      on_open = function() M.remove_keymap("t", "<Esc>") end,
-      on_close = function() vim.api.nvim_set_keymap("t", "<Esc>", [[<C-\><C-n>]], { silent = true, noremap = true }) end,
-      on_exit = function()
-        -- For Stop Term Mode
-        vim.cmd [[stopinsert]]
-      end,
-    }
   end
 end
 
@@ -298,48 +148,6 @@ function M.list_remove_unique(lst, vals)
   return lst
 end
 
-function M.toggle_unicmatrix()
-  return function()
-    require("astrocore").toggle_term_cmd {
-      cmd = "unimatrix -s 96 -o -b",
-      hidden = false,
-      direction = "float",
-      float_opts = {
-        -- Enable full screen
-        width = vim.o.columns,
-        height = vim.o.lines,
-        border = "none",
-      },
-    }
-  end
-end
-
-function M.tte(selection, open_callback, close_callback, flag)
-  local current_path = vim.fn.expand "%:p" -- get current file path
-  local cmd = "tte --input-file " .. current_path .. " --xterm-colors " .. selection
-  require("astrocore").toggle_term_cmd {
-    cmd = cmd,
-    hidden = false,
-    direction = "float",
-    close_on_exit = false,
-    float_opts = {
-      width = vim.o.columns,
-      height = vim.o.lines,
-      border = "none",
-    },
-    on_open = function()
-      if open_callback and type(open_callback) == "function" then open_callback() end
-    end,
-    on_close = function(t)
-      if flag then t:send "\x03" end
-    end,
-    on_exit = function(t, _, _, _)
-      if close_callback and type(close_callback) == "function" then close_callback() end
-      if vim.api.nvim_buf_is_loaded(t.bufnr) then vim.api.nvim_buf_delete(t.bufnr, { force = true }) end
-    end,
-  }
-end
-
 function M.get_all_cmds()
   -- stylua: ignore
   return {
@@ -348,138 +156,6 @@ function M.get_all_cmds()
     "rain","randomsequence","rings","scattered","slice","slide","spotlights","spray","swarm",
     "synthgrid","unstable","vhstape","waves","wipe",
   }
-end
-
-function M.toggle_tte()
-  if require("astrocore").is_available "telescope.nvim" then
-    local actions = require "telescope.actions"
-    local action_state = require "telescope.actions.state"
-    local pickers = require "telescope.pickers"
-    local finders = require "telescope.finders"
-    local conf = require("telescope.config").values
-
-    return function()
-      pickers
-        .new({}, {
-          prompt_title = "Select TTE Effect",
-          finder = finders.new_table {
-            results = M.get_all_cmds(),
-            entry_maker = function(entry)
-              return {
-                value = entry,
-                display = entry,
-                ordinal = entry,
-              }
-            end,
-          },
-          sorter = conf.generic_sorter {},
-          attach_mappings = function(prompt_bufnr)
-            actions.select_default:replace(function()
-              local selection = action_state.get_selected_entry()
-              actions.close(prompt_bufnr)
-              M.tte(selection.value, nil, nil, true)
-            end)
-            return true
-          end,
-        })
-        :find()
-    end
-  end
-end
-
-function M.get_os_name()
-  local sysname = vim.loop.os_uname().sysname
-  if sysname == "Linux" then
-    return "linux"
-  elseif sysname == "Windows_NT" then
-    return "windows"
-  elseif sysname == "Darwin" then
-    return "macos"
-  else
-    return "unknown"
-  end
-end
-
-function M.get_global_npm_path()
-  local os_name = M.get_os_name()
-  if os_name == "windows" then
-    return vim.fn.system "cmd.exe /c npm root -g"
-  else
-    return vim.fn.system "npm root -g"
-  end
-end
-
--- detect files in paths
--- return the first file within 'file_list' found in the paths
--- if no file exists in any paths, return false
---- @param file_list table
---- @param path_list table
-function M.detect_files_in_paths(file_list, path_list)
-  for _, file_name in pairs(file_list) do
-    for _, path in pairs(path_list) do
-      local full_path = path .. "/" .. file_name
-      if M.file_exists(full_path) then return full_path end
-    end
-  end
-  vim.notify("File:" .. vim.inspect(file_list) .. " not found", vim.log.levels.WARN)
-end
-
-function M.detect_workspace_type()
-  local cwd = vim.fn.getcwd()
-  local cmake_tools = require "cmake-tools"
-  if cmake_tools.is_cmake_project() then
-    return "c/c++"
-  elseif M.file_exists(cwd .. "/Cargo.toml") then
-    return "rust"
-  elseif vim.fn.isdirectory(cwd .. "/node_modules") == 1 or M.file_exists(cwd .. "/package.json") then
-    return "frontend"
-  elseif M.file_exists(cwd .. "/requirements.txt") or M.file_exists(cwd .. "/setup.py") then
-    return "python"
-  else
-    return "unknown"
-  end
-end
-
-function M.is_file_binary_pre_read()
-  -- stylua: ignore
-  local binary_ext = {
-    "out","bin","jpeg","pak","gz","rar","exe","bz2","tar","xz","Z","rpm","zip","a","so","o","jar",
-    "dll","lib","deb","I","png","jpg","mp3","mp4","m4a","flv","mkv","rmvb","avi","pcap","pdf","docx",
-    "xlsx","pptx","ram","mid","dwg","dtb","elf",
-  }
-  -- only work on normal buffers
-  -- Is this working?
-  if vim.bo.ft ~= "" then return false end
-  -- check -b flag
-  if vim.bo.bin then return true end
-  -- check ext within binary_ext
-  local filename = vim.fn.expand "%:p"
-  local ext = vim.fn.expand "%:e"
-  if vim.tbl_contains(binary_ext, ext) then return true end
-  local binary_file_header_tbl = {
-    "\x7f\x45\x4c\x46", -- ELF,
-    "\x50\x4b\x03\x04", --Archive
-    "\x00\x00\xa0\xe1", --zImage
-  }
-  local file = io.open(filename, "rb")
-  if file then
-    local chunk = file:read(4)
-    if vim.tbl_contains(binary_file_header_tbl, chunk) then return true end
-  end
-  -- none of the above
-  return false
-end
-
-function M.is_file_binary_post_read()
-  local encoding = (vim.bo.fenc ~= "" and vim.bo.fenc) or vim.o.enc
-  if encoding ~= "utf-8" then return true end
-  return false
-end
-
---- generate a '.nvim' directory under project root,
---- just like '.vscode' for vscode, keeps project specific settings
-function M.generate_workspace_config()
-
 end
 
 return M

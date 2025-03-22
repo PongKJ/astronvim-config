@@ -82,7 +82,7 @@ return {
     end,
   },
   {
-    "jay-babu/mason-nvim-dap.nvim",
+    "PongKJ/mason-nvim-dap.nvim",
     optional = true,
     opts = function(_, opts)
       opts.ensure_installed = utils.list_insert_unique(opts.ensure_installed, { "python" })

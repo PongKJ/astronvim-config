@@ -43,13 +43,7 @@ return {
         -- disable format on save for specified filetypes
         ignore_filetypes = {},
       }, -- disable formatting capabilities for specific language servers
-      disabled = {
-        -- TODO: After clangd supports specify formatting options, remove it from this list
-        "clangd",
-        -- INFO: Don't use lsp for formatting, but use null-ls with flexible
-        -- configurations
-        "neocmake",
-      },
+      disabled = {},
       -- default format timeout
       timeout_ms = 20000,
     },

@@ -7,7 +7,7 @@ return {
       strategy = {
         "toggleterm",
         -- load your default shell before starting the task
-        use_shell = true,
+        use_shell = false,
         -- overwrite the default toggleterm "direction" parameter
         direction = "horizontal",
         -- overwrite the default toggleterm "highlights" parameter
@@ -23,10 +23,10 @@ return {
         -- only if the exit code is 0.
         quit_on_exit = "never",
         -- open the toggleterm window when a task starts
-        open_on_start = true,
+        open_on_start = false,
         -- mirrors the toggleterm "hidden" parameter, and keeps the task from
         -- being rendered in the toggleable window
-        hidden = false,
+        hidden = true,
         -- command to run when the terminal is created. Combine with `use_shell`
         -- to run a terminal command before starting the task
         on_create = nil,
@@ -49,16 +49,16 @@ return {
         -- Width dimensions can be integers or a float between 0 and 1 (e.g. 0.4 for 40%)
         -- min_width and max_width can be a single value or a list of mixed integer/float types.
         -- max_width = {100, 0.2} means "the lesser of 100 columns or 20% of total"
-        max_width = { 200, 0.4 },
+        max_width = { 100, 0.2 },
         -- min_width = {40, 0.1} means "the greater of 40 columns or 10% of total"
-        min_width = { 65, 0.3 },
+        min_width = { 40, 0.1 },
         -- optionally define an integer/float for the exact width of the task list
         width = nil,
         max_height = { 20, 0.1 },
         min_height = 8,
         height = nil,
         -- String that separates tasks
-        separator = "-----------------------------------------------------",
+        separator = "--------------------------------------",
         -- Default direction. Can be "left", "right", or "bottom"
         direction = "bottom",
         -- Set keymap to false to remove default behavior
@@ -72,7 +72,7 @@ return {
           ["<C-v>"] = "OpenVsplit",
           ["<C-s>"] = "OpenSplit",
           ["<C-f>"] = "OpenFloat",
-          ["<C-q>"] = "OpenQuickFix",
+          ["<C-x>"] = "OpenQuickFix",
           ["p"] = "TogglePreview",
           ["<C-l>"] = false,
           ["<C-h>"] = false,
@@ -84,7 +84,7 @@ return {
           ["}"] = "NextTask",
           ["<C-k>"] = false,
           ["<C-j>"] = false,
-          ["q"] = "Close",
+          ["<C-q>"] = "Close",
         },
       },
       -- See :help overseer-actions

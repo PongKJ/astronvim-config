@@ -11,14 +11,34 @@ return {
     vim.notify("Workspace Type:" .. workspace_type .. "", vim.log.levels.INFO)
     local maps = opts.mappings
     if maps then
-      if workspace_type == "c/c++" then
-        -- TODO: Not hardcode this commands
+      if workspace_type ~= "unkown" then
+        maps.n["<Leader>W"] = { "", desc = "Workspace" }
+        maps.n["<Leader>Wd"] = {
+          function() require("helper.workspace").ensure_workspace_dotfiles "c_cpp" end,
+          desc = "Ensure dotfiles",
+        }
+      end
+      -- Overseer + .vscode/tasks.json to manage tasks
+      maps.n["<Leader>o"] = { "", desc = "Overseer" }
+      -- TODO: Add other workspace types
+      if workspace_type == "c_cpp" then
         maps.n["<Leader>ns"] = { "<Cmd>ClangdSwitchSourceHeader<CR>", desc = "Switch between source and header" }
-        maps.n["<Leader>c"] = { "", desc = "C/Cpp tasks" }
-        maps.n["<Leader>cs"] = { "", desc = "Target specify" }
+        maps.n["<Leader>c"] = { "", desc = "C_Cpp tasks" }
         maps.n["<Leader>cr"] = {
-          function() require("overseer").run_template { tags = { overseer.TAG.RUN }, reuse_termnal = true } end,
-          desc = "Run",
+          "<Cmd>OverseerRun RUN<CR>",
+          desc = "Run target",
+        }
+        maps.n["<Leader>cb"] = {
+          "<Cmd>OverseerRun Build<CR>",
+          desc = "Build target",
+        }
+        maps.n["<Leader>ct"] = {
+          "<Cmd>OverseerRun Test<CR>",
+          desc = "Running target",
+        }
+        maps.n["<Leader>cc"] = {
+          "<Cmd>OverseerRun CLEAN<CR>",
+          desc = "clean",
         }
         maps.n["<Leader>csr"] = {
           function()
@@ -66,12 +86,6 @@ return {
         }
         maps.n["<Leader>cr"] = { "<Cmd>RustLsp! runnables<CR>", desc = "Run" }
         maps.n["<Leader>csr"] = { "<Cmd>RustLsp runnables<CR>", desc = "Select Run Target" }
-      elseif workspace_type == "python" then
-        maps.n["<Leader>c"] = { "", desc = "Python tasks" }
-        -- TODO: Add python tasks
-      elseif workspace_type == "frontend" then
-        maps.n["<Leader>c"] = { "", desc = "Frontend tasks" }
-        maps.n["<Leader>cr"] = { "<Cmd>OverseerRun<CR>", desc = "Run" }
       end
 
       -- term mode mappings

@@ -55,14 +55,14 @@ return {
       opts.handlers.sqlfluff = function()
         local null_ls = require "null-ls"
         local buf_diagnostics_buildins = null_ls.builtins.diagnostics.sqlfluff
-        local config_file = require("utils").detect_files_in_paths(
-          { ".sqlfluff", "sqlfluff" },
-          { vim.fn.getcwd(), vim.fn.stdpath "config" .. "/templates" }
-        )
-        if config_file then
-          table.insert(buf_diagnostics_buildins._opts.args, "--config")
-          table.insert(buf_diagnostics_buildins._opts.args, config_file)
-        end
+        -- local config_file = require("utils").detect_files_in_paths(
+        --   { ".sqlfluff", "sqlfluff" },
+        --   { vim.fn.getcwd(), vim.fn.stdpath "config" .. "/templates" }
+        -- )
+        -- if config_file then
+        --   table.insert(buf_diagnostics_buildins._opts.args, "--config")
+        --   table.insert(buf_diagnostics_buildins._opts.args, config_file)
+        -- end
         null_ls.register(null_ls.builtins.diagnostics.sqlfluff.with {
           generator_opts = buf_diagnostics_buildins._opts,
           filetypes = { "sql", "dbt" },

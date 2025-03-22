@@ -21,10 +21,6 @@ return {
             function() require("dap").down() end,
             desc = "Down Strace",
           },
-          [prefix_debug .. "j"] = {
-            function() require("dap").down() end,
-            desc = "Down Strace",
-          },
           [prefix_debug .. "k"] = {
             function() require("dap").up() end,
             desc = "Up Strace",
@@ -33,14 +29,17 @@ return {
             function() require("dap.ui.widgets").preview() end,
             desc = "Debugger Preview",
           },
-          [prefix_debug .. "P"] = { function() require("dap").pause() end, desc = "Pause (F6)" },
-          [prefix_debug .. "u"] = {
-            function() require("dapui").toggle { layout = 2, reset = true } end,
-            desc = "Toggle Tray Debugger UI and reset layout",
+          [prefix_debug .. "P"] = {
+            function() require("dap").pause() end,
+            desc = "Pause (F6)",
           },
-          [prefix_debug .. "U"] = {
-            function() require("dapui").toggle { reset = true } end,
-            desc = "Toggle All Debugger UI and reset layout",
+          [prefix_debug .. "t"] = {
+            function() require("dap").terminate() end,
+            desc = "Terminate",
+          },
+          [prefix_debug .. "u"] = {
+            function() require("dapui").toggle { reset = false } end,
+            desc = "Toggle Debugger UI",
           },
           [prefix_debug .. "r"] = {
             function() require("dap").run_last() end,
@@ -90,7 +89,7 @@ return {
       },
     },
   },
-  { "jay-babu/mason-nvim-dap.nvim", optional = true },
+  { "PongKJ/mason-nvim-dap.nvim", optional = true },
   {
     "Weissle/persistent-breakpoints.nvim",
     event = "BufEnter",
@@ -123,17 +122,112 @@ return {
       enabled_commands = true,
       only_first_definition = true,
       virt_text_pos = "eol",
-      highlight_changed_variables = false,
-      all_frames = false,
+      highlight_changed_variables = true,
+      all_frames = true,
     },
   },
   {
     "rcarriga/nvim-dap-ui",
+    dependencies = { "mfussenegger/nvim-dap", "nvim-neotest/nvim-nio" },
     config = function(_, opts)
       local dap, dapui = require "dap", require "dapui"
-      dap.listeners.after.event_initialized["dapui_config"] = function()
-        require("dapui").open { layout = 2, reset = true }
+      dap.listeners.before.attach.dapui_config = function()
+        dapui.open { reset = false }
+        vim.cmd "GitBlameDisable"
       end
+      dap.listeners.before.launch.dapui_config = function()
+        dapui.open { reset = false }
+        vim.cmd "GitBlameDisable"
+      end
+      dap.listeners.before.event_terminated.dapui_config = function()
+        dapui.close {}
+        vim.cmd "GitBlameEnable"
+      end
+      dap.listeners.before.event_exited.dapui_config = function()
+        dapui.close {}
+        vim.cmd "GitBlameEnable"
+      end
+      opts = {
+        controls = {
+          element = "repl",
+          enabled = false,
+          icons = {
+            disconnect = "",
+            pause = "",
+            play = "",
+            run_last = "",
+            step_back = "",
+            step_into = "",
+            step_out = "",
+            step_over = "",
+            terminate = "",
+          },
+        },
+        element_mappings = {},
+        expand_lines = true,
+        floating = {
+          border = "single",
+          mappings = {
+            close = { "q", "<Esc>" },
+          },
+        },
+        force_buffers = true,
+        icons = {
+          collapsed = "",
+          current_frame = "",
+          expanded = "",
+        },
+        layouts = {
+          {
+            elements = {
+              {
+                id = "scopes",
+                size = 0.25,
+              },
+              {
+                id = "breakpoints",
+                size = 0.25,
+              },
+              {
+                id = "stacks",
+                size = 0.25,
+              },
+              {
+                id = "watches",
+                size = 0.25,
+              },
+            },
+            position = "left",
+            size = 50,
+          },
+          {
+            elements = {
+              {
+                id = "repl",
+                size = 0.5,
+              },
+              {
+                id = "console",
+                size = 0.5,
+              },
+            },
+            position = "bottom",
+            size = 8,
+          },
+        },
+        mappings = {
+          edit = "e",
+          expand = { "<CR>", "<2-LeftMouse>" },
+          open = "o",
+          remove = "d",
+          repl = "r",
+          toggle = "t",
+        },
+        render = {
+          indent = 1,
+          max_value_lines = 100,
+        },
+      }
       dapui.setup(opts)
     end,
   },

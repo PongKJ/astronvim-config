@@ -30,6 +30,7 @@ return {
   { import = "astrocommunity.recipes.auto-session-restore" },
   { import = "astrocommunity.recipes.neovide" },
   { import = "astrocommunity.keybinding.nvcheatsheet-nvim" },
+  { import = "astrocommunity.recipes.heirline-vscode-winbar" },
   {
     "AstroNvim/astrocore",
     opts = {

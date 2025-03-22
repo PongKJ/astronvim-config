@@ -126,14 +126,14 @@ return {
       opts.handlers.markdownlint = function()
         local null_ls = require "null-ls"
         local markdownlint_diagnostics_buildins = null_ls.builtins.diagnostics.markdownlint
-        local config_file = require("utils").detect_files_in_paths(
-          { ".markdownlint.jsonc", ".markdownlint.json" },
-          { vim.fn.getcwd(), vim.fn.stdpath "config" .. "/templates" }
-        )
-        if config_file then
-          table.insert(markdownlint_diagnostics_buildins._opts.args, "--config")
-          table.insert(markdownlint_diagnostics_buildins._opts.args, config_file)
-        end
+        -- local config_file = require("utils").detect_files_in_paths(
+        --   { ".markdownlint.jsonc", ".markdownlint.json" },
+        --   { vim.fn.getcwd(), vim.fn.stdpath "config" .. "/templates" }
+        -- )
+        -- if config_file then
+        --   table.insert(markdownlint_diagnostics_buildins._opts.args, "--config")
+        --   table.insert(markdownlint_diagnostics_buildins._opts.args, config_file)
+        -- end
         null_ls.register(null_ls.builtins.diagnostics.markdownlint.with {
           generator_opts = markdownlint_diagnostics_buildins._opts,
         })

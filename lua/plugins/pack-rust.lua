@@ -55,33 +55,6 @@ return {
       },
     },
   },
-
-  -- {
-  --   "CWndpkj/none-ls.nvim",
-  --   optional = true,
-  --   ft = { "rust" },
-  --   dependencies = {
-  --     "nvimtools/none-ls-extras.nvim",
-  --   },
-  --   opts = function(_, opts)
-  --     opts.debug = true
-  --     local global_config = vim.fn.stdpath "config" .. "/templates"
-  --     local user_config = vim.fn.getcwd()
-  --     local rustfmt_args = {}
-  --
-  --     local path = require("utils").detect_files_in_paths({ "rustfmt.toml" }, { user_config, global_config })
-  --     -- Since we know that the file exists, we can safely use it without checking
-  --     utils.list_insert_unique(rustfmt_args, { "--config-path", path })
-  --     print(vim.inspect(rustfmt_args))
-  --     if not opts.sources then opts.sources = {} end
-  --     opts.sources = vim.list_extend(opts.sources, {
-  --       require("none-ls.formatting.rustfmt").with {
-  --         extra_args = rustfmt_args,
-  --       }, -- requires none-ls-extras.nvim
-  --     })
-  --   end,
-  -- },
-
   {
     "nvim-treesitter/nvim-treesitter",
     opts = function(_, opts)
@@ -91,7 +64,7 @@ return {
     end,
   },
   {
-    "jay-babu/mason-nvim-dap.nvim",
+    "PongKJ/mason-nvim-dap.nvim",
     optional = true,
     opts = function(_, opts)
       -- dap
