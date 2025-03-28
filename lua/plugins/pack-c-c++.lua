@@ -30,7 +30,8 @@ return {
       }
 
       if require("utils").detect_workspace_type() == "c/c++" then
-        local compile_commands = require("helper.file").detect_file_in_paths("compile_commands.json", vim.fn.getcwd())
+        local compile_commands =
+          require("helper.file").detect_file_in_paths("compile_commands.json", { vim.fn.getcwd() })
         if compile_commands then
           utils.list_insert_unique(extra_args, { "--compile-commands-dir", compile_commands })
         end

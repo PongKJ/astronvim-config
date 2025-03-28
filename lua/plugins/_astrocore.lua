@@ -37,6 +37,7 @@ return {
         api = "goctl",
         MD = "markdown",
         tpl = "gotmpl",
+        slint = "slint",
       },
       filename = {
         [".eslintrc.json"] = "jsonc",
@@ -45,7 +46,7 @@ return {
         ["/tmp/neomutt.*"] = "markdown",
         ["tsconfig*.json"] = "jsonc",
         [".*/%.vscode/.*%.json"] = "jsonc",
-        [".env.*"] = "sh"
+        [".env.*"] = "sh",
       },
     },
   },

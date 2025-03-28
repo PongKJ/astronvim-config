@@ -96,7 +96,7 @@ return {
                 },
               },
               rustfmt = {
-                extraArgs = { "--config-path", vim.fn.stdpath "config" .. "/templates/rustfmt.toml" },
+                -- extraArgs = { "--config-path", vim.fn.stdpath "config" .. "/templates/rustfmt.toml" },
               },
               -- Add clippy lints for Rust.
               checkOnSave = {

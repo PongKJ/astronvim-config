@@ -117,13 +117,14 @@ return {
     dependencies = { "mfussenegger/nvim-dap", "nvim-treesitter/nvim-treesitter" },
     event = "User AstroFile",
     opts = {
-      commented = true,
+      commented = false,
       enabled = true,
       enabled_commands = true,
-      only_first_definition = true,
+      only_first_definition = false,
       virt_text_pos = "eol",
       highlight_changed_variables = true,
       all_frames = true,
+      all_references = true,
     },
   },
   {
@@ -198,7 +199,7 @@ return {
               },
             },
             position = "left",
-            size = 50,
+            size = 40,
           },
           {
             elements = {
