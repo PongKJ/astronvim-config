@@ -1,3 +1,4 @@
+local utils = require "astrocore"
 local set_mappings = require("astrocore").set_mappings
 local decode_json = require("utils").decode_json
 local check_json_key_exists = require("utils").check_json_key_exists
@@ -154,17 +155,9 @@ return {
     end,
   },
   {
-    "williamboman/mason-lspconfig.nvim",
-    opts = function(_, opts)
-      opts.ensure_installed = require("astrocore").list_insert_unique(opts.ensure_installed, { "eslint", "vtsls" })
-    end,
-  },
-  {
     "jay-babu/mason-null-ls.nvim",
     optional = true,
     opts = function(_, opts)
-      opts.ensure_installed = require("astrocore").list_insert_unique(opts.ensure_installed, { "prettierd" })
-
       if not opts.handlers then opts.handlers = {} end
 
       opts.handlers.prettierd = function(source_name, methods)
@@ -176,10 +169,11 @@ return {
     end,
   },
   {
-    "PongKJ/mason-nvim-dap.nvim",
+    "WhoIsSethDaniel/mason-tool-installer.nvim",
     optional = true,
     opts = function(_, opts)
-      opts.ensure_installed = require("astrocore").list_insert_unique(opts.ensure_installed, { "js" })
+      opts.ensure_installed =
+        utils.list_insert_unique(opts.ensure_installed, { "js-debug-adapter", "eslint-lsp", "vtsls", "prettierd" })
     end,
   },
   {

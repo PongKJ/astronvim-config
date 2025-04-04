@@ -65,9 +65,12 @@ return {
       "williamboman/mason.nvim",
       "nvimtools/none-ls.nvim",
     },
+  },
+  {
+    "WhoIsSethDaniel/mason-tool-installer.nvim",
+    optional = true,
     opts = function(_, opts)
-      opts.ensure_installed =
-        require("astrocore").list_insert_unique(opts.ensure_installed, { "clang-format", "cmakelang" })
+      opts.ensure_installed = utils.list_insert_unique(opts.ensure_installed, { "clang-format", "cmakelang" })
     end,
   },
   -- {

@@ -96,13 +96,22 @@ return {
     "jay-babu/mason-null-ls.nvim",
     optional = true,
     opts = function(_, opts)
-      opts.ensure_installed = require("astrocore").list_insert_unique(opts.ensure_installed, { "buf" })
       if not opts.handlers then opts.handlers = {} end
 
       opts.handlers.buf = function()
         diagnostic_auto_import_config()
         formatting_auto_import_config()
       end
+    end,
+  },
+  {
+    "WhoIsSethDaniel/mason-tool-installer.nvim",
+    optional = true,
+    opts = function(_, opts)
+      -- lsp
+      opts.ensure_installed = require("astrocore").list_insert_unique(opts.ensure_installed, {
+        { "buf" },
+      })
     end,
   },
 }

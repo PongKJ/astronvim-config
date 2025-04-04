@@ -1,9 +1,9 @@
 local utils = require "astrocore"
 return {
   {
-    "williamboman/mason-lspconfig.nvim",
+    "WhoIsSethDaniel/mason-tool-installer.nvim",
     optional = true,
-    opts = function(_, opts) opts.ensure_installed = utils.list_insert_unique(opts.ensure_installed, { "slint_lsp" }) end,
+    opts = function(_, opts) opts.ensure_installed = utils.list_insert_unique(opts.ensure_installed, { "slint-lsp" }) end,
   },
   {
     "AstroNvim/astrolsp",

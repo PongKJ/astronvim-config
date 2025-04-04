@@ -66,9 +66,15 @@ return {
   {
     "PongKJ/mason-nvim-dap.nvim",
     optional = true,
+  },
+  {
+    "WhoIsSethDaniel/mason-tool-installer.nvim",
+    optional = true,
     opts = function(_, opts)
-      -- dap
-      opts.ensure_installed = utils.list_insert_unique(opts.ensure_installed, { "codelldb" })
+      -- lsp
+      opts.ensure_installed = utils.list_insert_unique(opts.ensure_installed, {
+        { "codelldb" },
+      })
     end,
   },
   {

@@ -125,7 +125,7 @@ return {
             ["cmp.entry.get_documentation"] = true,
           },
           signature = {
-            enabled = true,
+            enabled = false,
             auto_open = {
               enabled = true,
               trigger = true, -- Automatically show signature help when typing a trigger character from the LSP

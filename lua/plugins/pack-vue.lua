@@ -1,3 +1,4 @@
+local utils = require "astrocore"
 local is_vue_project = require("utils").is_vue_project
 
 return {
@@ -61,17 +62,11 @@ return {
     end,
   },
   {
-    "williamboman/mason-lspconfig.nvim",
+    "WhoIsSethDaniel/mason-tool-installer.nvim",
     optional = true,
     opts = function(_, opts)
-      opts.ensure_installed = require("astrocore").list_insert_unique(opts.ensure_installed, { "volar" })
-    end,
-  },
-  {
-    "PongKJ/mason-nvim-dap.nvim",
-    optional = true,
-    opts = function(_, opts)
-      opts.ensure_installed = require("astrocore").list_insert_unique(opts.ensure_installed, { "js" })
+      opts.ensure_installed =
+        utils.list_insert_unique(opts.ensure_installed, { "js-debug-adapter", "vue-language-server" })
     end,
   },
 }
