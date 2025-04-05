@@ -1,8 +1,8 @@
-# AstroNvimV4 Config
+# AstroNvimV5 Config
 
 <!--toc:start-->
 
-- [AstroNvimV4 Config](#astronvimv4-config)
+- [AstroNvimV5 Config](#astronvimv5-config)
   - [Support neovim version](#support-neovim-version)
   - [Features](#features)
   - [workflow screenshot](#workflow-screenshot)
@@ -41,7 +41,7 @@ This streamlined combination of tools significantly enhances my productivity and
 
 ## Support neovim version
 
-neovim >= `0.10`, recommend `0.10.1`
+neovim >= `0.11`, recommend `0.11.0`
 
 ## Features
 
@@ -157,6 +157,7 @@ lazydocker:
 
 ### Note: for rust development
 
+> [!NOTE]
 > rustup and mason's installation of rust-analzyer are different and may cause some [bugs](https://github.com/rust-lang/rust-analyzer/issues/17289), manual installation is recommended.
 
 ```
@@ -165,7 +166,7 @@ rustup component add rust-analyzer
 
 ### Make a backup of your current nvim and shared folder
 
-```shell
+```bash
 mv ~/.config/nvim ~/.config/nvim.bak
 mv ~/.local/share/nvim ~/.local/share/nvim.bak
 mv ~/.local/state/nvim ~/.local/state/nvim.bak
@@ -180,13 +181,13 @@ You can also just clone this repository directly if you do not want to track you
 
 ### Clone the repository
 
-```shell
+```bash
 git clone https://github.com/CWndpkj/nvimConfigs.git ~/.config/nvim
 ```
 
 ### Start Neovim
 
-```shell
+```bash
 nvim
 ```
 
@@ -318,6 +319,7 @@ Copilot Mappings
 
 _vim.lsp.buf.hover()_ `KK` jump into signature help float window
 
+> [!INFO]
 > Displays hover information about the symbol under the cursor in a floating window. Calling the function twice will jump into the floating window.
 
 ## Project workspace setup
