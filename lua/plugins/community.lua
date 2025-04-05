@@ -31,6 +31,9 @@ return {
   { import = "astrocommunity.recipes.neovide" },
   { import = "astrocommunity.keybinding.nvcheatsheet-nvim" },
   { import = "astrocommunity.recipes.heirline-vscode-winbar" },
+  { import = "astrocommunity.completion.cmp-latex-symbols" },
+  { import = "astrocommunity.completion.cmp-calc" },
+  { import = "astrocommunity.completion.cmp-spell" },
   {
     "AstroNvim/astrocore",
     opts = {

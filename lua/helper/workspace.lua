@@ -57,8 +57,7 @@ end
 
 function M.detect_workspace_type()
   local cwd = vim.fn.getcwd()
-  local cmake_tools = require "cmake-tools"
-  if cmake_tools.is_cmake_project() then
+  if file.file_exists(cwd .. "./CMakeLists.txt") then
     return "c_cpp"
   elseif file.file_exists(cwd .. "/Cargo.toml") then
     return "rust"

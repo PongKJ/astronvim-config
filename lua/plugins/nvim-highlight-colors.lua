@@ -1,6 +1,5 @@
 -- WARNING:https://github.com/AstroNvim/AstroNvim/issues/2593
 return {
-  { "NvChad/nvim-colorizer.lua", enabled = false },
   {
     "brenoprata10/nvim-highlight-colors",
     event = "User AstroFile",

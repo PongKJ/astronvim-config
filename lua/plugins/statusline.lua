@@ -58,8 +58,6 @@ return {
     "rebelot/heirline.nvim",
     opts = function(_, opts)
       local status = require "astroui.status"
-      local cmake = require "cmake-tools"
-      local icons = require "icons.cmake-tools-icons"
       opts.statusline = {
         -- default highlight for the entire statusline
         hl = { fg = "fg", bg = "bg" },
@@ -116,78 +114,6 @@ return {
         status.component.git_diff {
           padding = { left = 1 },
           surround = { separator = "none" },
-        },
-        status.component.builder {
-          {
-            provider = function()
-              local c_preset = cmake.get_configure_preset()
-              return icons.ui.Gear .. "[" .. (c_preset and c_preset or "X") .. "]"
-            end,
-            icon = icons.ui.Search,
-            condition = function() return cmake.is_cmake_project() end,
-            on_click = {
-              name = "cmake_config_preset",
-              callback = function() vim.cmd "CMakeSelectConfigurePreset" end,
-            },
-          },
-          surround = {
-            separator = "left",
-            color = { main = "bg", right = "bg" },
-          },
-        },
-        status.component.builder {
-          {
-            provider = function()
-              local build_target = cmake.get_build_target()
-              return icons.ui.Build .. "[" .. (build_target and build_target or "") .. "]"
-            end,
-            icon = icons.ui.Search,
-            condition = function() return cmake.is_cmake_project() end,
-            on_click = {
-              name = "cmake_select_build_target",
-              callback = function() vim.cmd "CMakeSelectBuildTarget" end,
-            },
-          },
-          surround = {
-            separator = "left",
-            color = { main = "bg", right = "bg" },
-          },
-        },
-        status.component.builder {
-          {
-            provider = function()
-              local type = cmake.get_build_type()
-              return "<" .. (type and type or "") .. ">"
-            end,
-            icon = icons.ui.Search,
-            condition = function() return cmake.is_cmake_project() end,
-            on_click = {
-              name = "cmake_select_build_type",
-              callback = function() vim.cmd "CMakeSelectBuildType" end,
-            },
-          },
-          surround = {
-            separator = "left",
-            color = { main = "bg", right = "bg" },
-          },
-        },
-        status.component.builder {
-          {
-            provider = function()
-              local type = cmake.get_launch_target()
-              return icons.ui.Run .. "[" .. (type and type or "") .. "]"
-            end,
-            icon = icons.ui.Search,
-            condition = function() return cmake.is_cmake_project() end,
-            on_click = {
-              name = "cmake_select_lunch_target",
-              callback = function() vim.cmd "CMakeSelectLunchTarget" end,
-            },
-          },
-          surround = {
-            separator = "left",
-            color = { main = "bg", right = "bg" },
-          },
         },
 
         -- fill the rest of the statusline

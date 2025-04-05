@@ -8,47 +8,6 @@ local markdown_table_change = function()
   end)
 end
 
-local start_marker = "<!-- markdown toc:start -->"
-local end_marker = "<!-- markdown toc:stop  -->"
-
-local function gen_toc(start_linenr, end_linenr)
-  local parser = vim.treesitter.get_parser(0, "markdown")
-  local root = parser:parse()[1]:root()
-  local query = vim.treesitter.query.parse(
-    "markdown",
-    [[
-(atx_heading) @header
-    ]]
-  )
-  local lines = { start_marker }
-  for _, node in query:iter_captures(root, 0, end_linenr) do
-    local level = tonumber(node:child(0):type():match "atx_h(%d)_marker") - 2
-    if level >= 0 then
-      local title = vim.treesitter.get_node_text(node:field("heading_content")[1], 0)
-      local link = title:gsub("%s", "-")
-      lines[#lines + 1] = ("  "):rep(level) .. ("* [%s](#%s)"):format(title, link)
-    end
-  end
-  lines[#lines + 1] = end_marker
-  vim.api.nvim_buf_set_lines(0, start_linenr, end_linenr, true, lines)
-end
-local function update_toc()
-  local lines = vim.api.nvim_buf_get_lines(0, 0, -1, true)
-  local start_linenr, end_linenr
-  for i, line in ipairs(lines) do
-    if line == start_marker then
-      start_linenr = i - 1
-    else
-      if line == end_marker then
-        end_linenr = i
-        break
-      end
-    end
-  end
-  if not (start_linenr and end_linenr) then return end
-  gen_toc(start_linenr, end_linenr)
-end
-
 ---@type LazySpec
 return {
   {
@@ -73,30 +32,18 @@ return {
       config = {
         marksman = {
           on_attach = function()
-            utils.set_mappings {
+            utils.set_mappings({
               n = {
-                ["<Leader>lt"] = { desc = "Markdown TOC" },
-                ["<Leader>ltg"] = {
-                  function() gen_toc(vim.api.nvim_win_get_cursor(0)[1] - 1, vim.api.nvim_win_get_cursor(0)[1] - 1) end,
-                  desc = "Markdown Generate TOC",
-                },
-                ["<Leader>ltu"] = { update_toc, desc = "Markdown Update TOC" },
+                ["<Leader>lp"] = { "<cmd>MarkdownPreview<cr>", desc = "Preview" },
+                ["<Leader>ls"] = { "<cmd>MarkdownPreviewStop<cr>", desc = "Stop preview" },
+                ["<Leader>mp"] = { "<cmd>PastifyAfter<CR>", desc = "Markdown Paste Image After" },
+                ["<Leader>mP"] = { "<cmd>Pastify<CR>", desc = "Markdown Paste Image" },
               },
-            }
-            if utils.is_available "markdown-preview.nvim" then
-              utils.set_mappings({
-                n = {
-                  ["<Leader>lz"] = { "<cmd>MarkdownPreview<CR>", desc = "Markdown Start Preview" },
-                  ["<Leader>lZ"] = { "<cmd>MarkdownPreviewStop<CR>", desc = "Markdown Stop Preview" },
-                  ["<Leader>lp"] = { "<cmd>PastifyAfter<CR>", desc = "Markdown Paste Image After" },
-                  ["<Leader>lP"] = { "<cmd>Pastify<CR>", desc = "Markdown Paste Image" },
-                },
-                x = {
-                  ["<Leader>lt"] = { [[:'<,'>MakeTable! \t<CR>]], desc = "Markdown csv to table(Default:\\t)" },
-                  ["<Leader>lT"] = { markdown_table_change, desc = "Markdown csv to table with separate char" },
-                },
-              }, { buffer = true })
-            end
+              x = {
+                ["<Leader>mt"] = { [[:'<,'>MakeTable! \t<CR>]], desc = "Markdown csv to table(Default:\\t)" },
+                ["<Leader>mT"] = { markdown_table_change, desc = "Markdown csv to table with separate char" },
+              },
+            }, { buffer = true })
           end,
         },
       },
@@ -117,7 +64,7 @@ return {
     opts = function(_, opts)
       -- lsp
       opts.ensure_installed = utils.list_insert_unique(opts.ensure_installed, {
-        { "marksman" },
+        { "marksman", "prettierd", "markdownlint" },
       })
     end,
   },
@@ -125,9 +72,6 @@ return {
     "jay-babu/mason-null-ls.nvim",
     optional = true,
     opts = function(_, opts)
-      opts.ensure_installed =
-        require("astrocore").list_insert_unique(opts.ensure_installed, { "prettierd", "markdownlint" })
-
       opts.handlers.markdownlint = function()
         local null_ls = require "null-ls"
         local markdownlint_diagnostics_buildins = null_ls.builtins.diagnostics.markdownlint
@@ -145,13 +89,30 @@ return {
       end
     end,
   },
-  -- install with yarn or npm
+  -- BUG: Can't open browser
   {
     "iamcco/markdown-preview.nvim",
     cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
-    build = "cd app && npm install",
-    init = function() vim.g.mkdp_filetypes = { "markdown" } end,
-    ft = { "markdown" },
+    ft = { "markdown", "markdown.mdx" },
+    build = function(plugin)
+      local package_manager = vim.fn.executable "yarn" and "yarn" or vim.fn.executable "npx" and "npx -y yarn" or false
+
+      --- HACK: Use `yarn` or `npx` when possible, otherwise throw an error
+      ---@see https://github.com/iamcco/markdown-preview.nvim/issues/690
+      ---@see https://github.com/iamcco/markdown-preview.nvim/issues/695
+      if not package_manager then error "Missing `yarn` or `npx` in the PATH" end
+
+      local cmd = string.format(
+        "!cd %s && cd app && COREPACK_ENABLE_AUTO_PIN=0 %s install --frozen-lockfile",
+        plugin.dir,
+        package_manager
+      )
+      vim.cmd(cmd)
+    end,
+    init = function()
+      local plugin = require("lazy.core.config").spec.plugins["markdown-preview.nvim"]
+      vim.g.mkdp_filetypes = require("lazy.core.plugin").values(plugin, "ft", true)
+    end,
   },
   {
     "TobinPalmer/pastify.nvim",
@@ -163,17 +124,16 @@ return {
       save = "local",
     },
   },
+  -- TODO: make completions work
   {
-    "OXY2DEV/markview.nvim",
-    ft = "markdown", -- If you decide to lazy-load anyway
-    dependencies = {
-      "nvim-treesitter/nvim-treesitter",
-      "nvim-tree/nvim-web-devicons",
-    },
+    "MeanderingProgrammer/render-markdown.nvim",
+    dependencies = { "nvim-treesitter/nvim-treesitter", "echasnovski/mini.icons" }, -- if you use standalone mini plugins
+    ---@module 'render-markdown'
+    ---@type render.md.UserConfig
     opts = {
-      preview = {
-        hybrid_modes = { "n" },
-      },
+      completions = { lsp = { enabled = true } },
+      heading = { border = true },
+      indent = { enabled = true },
     },
   },
 }

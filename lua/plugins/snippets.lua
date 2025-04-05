@@ -11,6 +11,7 @@
 ---@type LazySpec
 return {
   "L3MON4D3/LuaSnip",
+  dependencies = { "rafamadriz/friendly-snippets" },
   config = function(plugin, opts)
     require "astronvim.plugins.configs.luasnip"(plugin, opts) -- include the default astronvim config that calls the setup call
     -- load snippets paths

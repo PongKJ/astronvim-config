@@ -35,7 +35,8 @@ return {
       on_attach = function() end,
     },
   },
-  {
+  -- TODO: Use snacks.nvim instead
+  -- {
     -- "nvim-telescope/telescope.nvim",
     -- dependencies = {
       -- {
@@ -101,7 +102,7 @@ return {
     --     },
     --   })
     -- end,
-  },
+  -- },
   {
     "NeogitOrg/neogit",
     optional = true,
