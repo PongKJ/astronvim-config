@@ -114,10 +114,8 @@ return {
 
       maps.n["n"] = { "nzz" }
       maps.n["N"] = { "Nzz" }
-
-      -- BUG: SELECT Mode下输入以n开始的单词导致光标也被移动到中部
-      -- maps.v["n"] = { "nzz" }
-      -- maps.v["N"] = { "Nzz" }
+      maps.v["n"] = { "nzz" }
+      maps.v["N"] = { "Nzz" }
 
       maps.n["H"] = { "^", desc = "Go to start without blank" }
       maps.n["L"] = { "$", desc = "Go to end without blank" }
@@ -186,5 +184,13 @@ return {
       end
     end
     opts.mappings = maps
+    vim.schedule(function()
+      -- Some keymap set in VISUAL mode also affect SELECT mode
+      -- So we need to delete them
+      vim.api.nvim_del_keymap("s", "n")
+      vim.api.nvim_del_keymap("s", "N")
+      vim.api.nvim_del_keymap("s", "H")
+      vim.api.nvim_del_keymap("s", "L")
+    end)
   end,
 }
