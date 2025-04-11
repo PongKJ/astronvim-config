@@ -115,6 +115,8 @@ return {
     end,
   },
   {
+    -- NOTE: Need to install python-neovim and python-pillow packages,
+    -- Run `pip3 install neovim pillow`
     "TobinPalmer/pastify.nvim",
     cmd = { "Pastify", "PastifyAfter" },
     opts = {
@@ -133,7 +135,6 @@ return {
     opts = {
       completions = { lsp = { enabled = true } },
       heading = { border = true },
-      indent = { enabled = true },
     },
   },
 }

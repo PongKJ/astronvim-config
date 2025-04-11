@@ -31,8 +31,6 @@
   - [Project workspace setup](#project-workspace-setup)
   <!--toc:end-->
 
-**NOTE:** This is the latest v4 configuration.
-
 In the course of my daily tasks, I have optimized my workflow by integrating several powerful tools. My terminal of choice is `WezTerm`, which offers a blend of performance and features that cater to my needs. Alongside this, I employ `tmux` to efficiently manage multiple terminal sessions within a single window.
 
 Additionally, I utilize `yazi` as my terminal-based file manager, which seamlessly fits into my terminal-centric workflow. It is also worth noting that my configuration is compatible with `neovide`, eliminating the necessity for additional setups.
