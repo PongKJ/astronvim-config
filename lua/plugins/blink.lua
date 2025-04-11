@@ -50,11 +50,15 @@ return {
         preset = "default",
         ["<Tab>"] = {
           "accept",
-          "snippet_forward",
           "fallback",
         },
-        ["<S-Tab>"] = {
+        ["<C-N>"] = {
+          "snippet_forward",
+        },
+        ["<C-P>"] = {
           "snippet_backward",
+        },
+        ["<S-Tab>"] = {
           "fallback",
         },
         ["<CR>"] = { "fallback" },
