@@ -37,7 +37,6 @@ return {
         api = "goctl",
         MD = "markdown",
         tpl = "gotmpl",
-        slint = "slint",
       },
       filename = {
         [".eslintrc.json"] = "jsonc",
