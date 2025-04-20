@@ -1,18 +1,14 @@
 # AstroNvimV5 Config
 
 <!--toc:start-->
-
 - [AstroNvimV5 Config](#astronvimv5-config)
   - [Support neovim version](#support-neovim-version)
   - [Features](#features)
-  - [workflow screenshot](#workflow-screenshot)
-  - [other components config](#other-components-config)
   - [🛠️ Installation](#🛠️-installation)
-    - [The system should supports commands](#the-system-should-supports-commands)
+    - [The system should supports these commands](#the-system-should-supports-these-commands)
     - [Recommend install](#recommend-install)
     - [Note: for rust development](#note-for-rust-development)
     - [Make a backup of your current nvim and shared folder](#make-a-backup-of-your-current-nvim-and-shared-folder)
-    - [Create a new user repository from this template](#create-a-new-user-repository-from-this-template)
     - [Clone the repository](#clone-the-repository)
     - [Start Neovim](#start-neovim)
   - [Tips](#tips)
@@ -27,15 +23,9 @@
     - [Support for neovide](#support-for-neovide)
     - [Support Lazydocker](#support-lazydocker)
   - [General Mappings](#general-mappings)
-    - [`KK`](#kk)
-  - [Project workspace setup](#project-workspace-setup)
-  <!--toc:end-->
+    - [Signature Help](#signature-help)
+<!--toc:end-->
 
-In the course of my daily tasks, I have optimized my workflow by integrating several powerful tools. My terminal of choice is `WezTerm`, which offers a blend of performance and features that cater to my needs. Alongside this, I employ `tmux` to efficiently manage multiple terminal sessions within a single window.
-
-Additionally, I utilize `yazi` as my terminal-based file manager, which seamlessly fits into my terminal-centric workflow. It is also worth noting that my configuration is compatible with `neovide`, eliminating the necessity for additional setups.
-
-This streamlined combination of tools significantly enhances my productivity and provides a robust terminal experience.
 
 ## Support neovim version
 
@@ -43,44 +33,19 @@ neovim >= `0.11`, recommend `0.11.0`
 
 ## Features
 
-now,this config supports development in `TypeScript`,`Python`,`Go`,`Rust` and `markdown`.
+this config supports development in `TypeScript`,`Python`,`Go`,`Rust`,`markdown`,`C/Cpp`,`Flutter`,etc.
 
 - **_`Typescript`_**: `vtsls` work with `volar2`
 - **_`Python`_**: `basedpyright`
 - **_`Go`_**: `gopher.nvim` _-- support go zero framework_
 - **_`Markdown`_**: `iamcco/markdown-preview.nvim`,
 - **_`Rust`_**: `mrcjkb/rustaceanvim`
+- **_`Flutter`_**: `flutter-nvim/flutter-tools.nvim`
 - **_`C/C++`_**:`clangd+clang-format+clazy-standalone+neocmake+cmake-lint+cmake-format`
-
-## workflow screenshot
-
-`wezterm` + `tmux` + `astronvim`
-
-![homepage](assets/imgs/homepage.png)
-
-`wezterm`
-
-![wezterm](assets/imgs/wezterm.png)
-
-`tmux`
-
-![tmux](assets/imgs/tmux.png)
-
-`yazi`
-
-![yazi](assets/imgs/yazi.png)
-
-## other components config
-
-`wezterm`: [https://github.com/chaozwn/wezterm]('https://github.com/chaozwn/wezterm')
-
-`tmux`: [https://github.com/chaozwn/tmux]("https://github.com/chaozwn/tmux")
-
-`yazi`: [https://github.com/chaozwn/yazi]("https://github.com/chaozwn/yazi")
 
 ## 🛠️ Installation
 
-### The system should supports commands
+### The system should supports these commands
 
 `npm`,`rustc`,`go`
 
@@ -171,12 +136,6 @@ mv ~/.local/state/nvim ~/.local/state/nvim.bak
 mv ~/.cache/nvim ~/.cache/nvim.bak
 ```
 
-### Create a new user repository from this template
-
-Press the "Use this template" button above to create a new repository to store your user configuration.
-
-You can also just clone this repository directly if you do not want to track your user configuration in GitHub.
-
 ### Clone the repository
 
 ```bash
@@ -207,7 +166,7 @@ nvim
 
 `<Leader>tm`
 
-```shell
+```bash
 pip install git+https://github.com/will8211/unimatrix.git
 ```
 
@@ -217,7 +176,7 @@ pip install git+https://github.com/will8211/unimatrix.git
 
 `<Leader>te`
 
-```shell
+```bash
 pip install terminaltexteffects
 ```
 
@@ -227,7 +186,7 @@ https://github.com/user-attachments/assets/ff8aa481-932d-431c-b1a1-ea7cc6e63920
 
 `<Leader>tt`
 
-```shell
+```bash
 brew install bottom
 ```
 
@@ -235,20 +194,20 @@ brew install bottom
 
 ### Neovim requirements
 
-```
+```bash
 npm install -g neovim
 pip install pynvim
 ```
 
 ### Markdown Image Paste
 
-```sh
+```bash
 pip install pillow
 ```
 
 ### Input Auto Switch
 
-```sh
+```bash
 brew tap daipeihust/tap
 brew install im-select
 im-select
@@ -269,7 +228,7 @@ return {
 
 ### Support for neovide
 
-```sh
+```bash
 brew install neovide
 neovide .
 ```
@@ -278,7 +237,7 @@ neovide .
 
 tigger command: `<leader>td`
 
-```sh
+```bash
 brew install lazydocker
 ```
 
@@ -307,21 +266,14 @@ brew install lazydocker
 | Open task menu              | <kbd>Leader+c</kbd>   | n    |
 
 Copilot Mappings
-
-| Action                   | Mappings              | Mode |
+| Action | Mappings | Mode |
 | ------------------------ | --------------------- | ---- |
-| Open chat panel          | <kbd>Leader+n+c</kbd> | n    |
-| Accept inline suggestion | <kbd>Ctrl+.</kbd>     | n    |
+| Open chat panel | <kbd>Leader+n+c</kbd> | n |
+| Accept inline suggestion | <kbd>Ctrl+.</kbd> | n |
 
-### `KK`
+### Signature Help
 
 _vim.lsp.buf.hover()_ `KK` jump into signature help float window
 
 > [!INFO]
 > Displays hover information about the symbol under the cursor in a floating window. Calling the function twice will jump into the floating window.
-
-## Project workspace setup
-
-Use`<Leader>c` to open project task menu,and it'll determine the type of current workspace by typical files like node_modules/ for frontend,CMakeLists.txt for c/cpp Cargo.toml for Rust.
-For cmake base c/cpp project,we use 'cmake-tools' to run cmake tasks.
-For other type of project,we use 'overseer' to run tasks,including c/cpp project base on makefile,Rust project ,Python project,Frontend project,etc
