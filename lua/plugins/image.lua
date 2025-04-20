@@ -1,7 +1,7 @@
 return {
   "3rd/image.nvim",
   enabled = function()
-    local os = require("utils").get_os_name()
+    local os = require("helper.os").get_os_name()
     if os == "linux" or os == "macos" then
       return true
     else

@@ -17,7 +17,7 @@ return {
     end,
   },
   {
-    "williamboman/mason-lspconfig.nvim",
+    "WhoIsSethDaniel/mason-tool-installer.nvim",
     optional = true,
     opts = function(_, opts)
       -- lsp

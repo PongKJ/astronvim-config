@@ -92,6 +92,6 @@ return {
         use_default_keybindings = false,
       },
     },
-    build = "pipx install --user .",
+    build = "pipx install .",
   },
 }

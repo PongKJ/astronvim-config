@@ -36,7 +36,7 @@ return {
       -- control auto formatting on save
       format_on_save = {
         -- enable or disable format on save globally
-        enabled = true,
+        enabled = false,
         -- enable format on save for specified filetypes only
         allow_filetypes = {},
         -- disable format on save for specified filetypes
