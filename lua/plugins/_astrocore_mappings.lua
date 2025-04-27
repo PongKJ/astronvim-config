@@ -90,6 +90,22 @@ return {
 
       -- term mode mappings
       maps.t["<esc>"] = { "<C-\\><C-n><CR>", desc = "Exit term mode" }
+      maps.t["<C-h>"] = { "<Cmd>wincmd h<CR>", desc = "Move to left window" }
+      maps.t["<C-j>"] = { "<Cmd>wincmd j<CR>", desc = "Move to down window" }
+      maps.t["<C-k>"] = { "<Cmd>wincmd k<CR>", desc = "Move to up window" }
+      maps.t["<C-l>"] = { "<Cmd>wincmd l<CR>", desc = "Move to right window" }
+      maps.t["<C-q>"] = { function() require("astrocore.buffer").close(0) end, desc = "Close terminal" }
+      maps.n["<C-F7>"] = {
+        function()
+          if vim.fn.bufexists "term://*" == 1 then
+            vim.cmd "TermNew"
+          else
+            vim.cmd "ToggleTerm"
+          end
+        end,
+        desc = "Open or create terminal",
+      }
+      maps.t["<C-F7>"] = { "<Cmd>TermNew<CR>", desc = "Execute TermNew" }
 
       -- <Leader>n
       maps.n["<Leader>n"] = { "", desc = "Highlights and copilot" }

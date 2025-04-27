@@ -1,6 +1,5 @@
 return {
   "AstroNvim/astrocore",
-  -- TODO: Verify this won't cause low performance
   ---@type AstroCoreOpts
   opts = {
     autocmds = {
@@ -25,6 +24,7 @@ return {
           callback = function() vim.cmd "set nopaste" end,
         },
       },
+      -- TODO: Verify this won't cause low performance
       disable_auto_comment = {
         {
           desc = "disbale auto comment",
