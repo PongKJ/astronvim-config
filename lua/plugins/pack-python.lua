@@ -1,47 +1,35 @@
 local utils = require "astrocore"
-local is_available = require("astrocore").is_available
-local set_mappings = require("astrocore").set_mappings
 
 ---@type LazySpec
 return {
   {
     "AstroNvim/astrolsp",
     ---@type AstroLSPOpts
-    opts = {
-      ---@diagnostic disable: missing-fields
-      config = {
-        basedpyright = {
-          on_attach = function()
-            if is_available "venv-selector.nvim" then
-              set_mappings({
+    opts = function(_, opts)
+      return vim.tbl_deep_extend("force", opts, {
+        ---@diagnostic disable: missing-fields
+        config = {
+          basedpyright = {
+            on_attach = function()
+              require("astrocore").set_mappings({
                 n = {
-                  ["<Leader>lv"] = {
-                    "<cmd>VenvSelect<CR>",
-                    desc = "Select VirtualEnv",
-                  },
-                  ["<leader>lV"] = {
-                    function()
-                      require("astrocore").notify(
-                        "Current Env:" .. require("venv-selector").get_active_venv(),
-                        vim.log.levels.INFO
-                      )
-                    end,
-                    desc = "Show Current VirtualEnv",
-                  },
                   ["<leader>lo"] = {
                     "<cmd>PyrightOrganizeImports<CR>",
                     desc = "Organize Imports",
                   },
                 },
               }, { buffer = true })
-            end
-          end,
-          filetypes = { "python" },
-          single_file_support = true,
-          root_dir = function(...)
-            local util = require "lspconfig.util"
-            return vim.fs.dirname(vim.fs.find(".git", { path = ..., upward = true })[1])
-              or util.root_pattern(unpack {
+            end,
+            before_init = function(_, c)
+              if not c.settings then c.settings = {} end
+              if not c.settings.python then c.settings.python = {} end
+              c.settings.python.pythonPath = vim.fn.exepath "python"
+            end,
+            filetypes = { "python" },
+            single_file_support = true,
+            root_dir = function(...)
+              local util = require "lspconfig.util"
+              return util.root_pattern(unpack {
                 "pyproject.toml",
                 "setup.py",
                 "setup.cfg",
@@ -49,21 +37,32 @@ return {
                 "Pipfile",
                 "pyrightconfig.json",
               })(...)
-          end,
-          settings = {
-            basedpyright = {
-              analysis = {
-                autoSearchPaths = true,
-                diagnosticMode = "openFilesOnly",
-                useLibraryCodeForTypes = true,
-                reportMissingTypeStubs = false,
-                typeCheckingMode = "basic",
+            end,
+            settings = {
+              basedpyright = {
+                analysis = {
+                  typeCheckingMode = "basic",
+                  autoImportCompletions = true,
+                  autoSearchPaths = true,
+                  diagnosticMode = "openFilesOnly",
+                  useLibraryCodeForTypes = true,
+                  reportMissingTypeStubs = false,
+                  diagnosticSeverityOverrides = {
+                    reportUnusedImport = "information",
+                    reportUnusedFunction = "information",
+                    reportUnusedVariable = "information",
+                    reportGeneralTypeIssues = "none",
+                    reportOptionalMemberAccess = "none",
+                    reportOptionalSubscript = "none",
+                    reportPrivateImportUsage = "none",
+                  },
+                },
               },
             },
           },
         },
-      },
-    },
+      })
+    end,
   },
   {
     "nvim-treesitter/nvim-treesitter",
@@ -80,17 +79,11 @@ return {
     opts = function(_, opts)
       -- lsp
       opts.ensure_installed = utils.list_insert_unique(opts.ensure_installed, {
-        { "black", "isort", "basedpyright" },
+        "black",
+        "isort",
+        "basedpyright",
+        "debugpy",
       })
-    end,
-  },
-  {
-    "PongKJ/mason-nvim-dap.nvim",
-    optional = true,
-    opts = function(_, opts)
-      opts.ensure_installed = utils.list_insert_unique(opts.ensure_installed, { "python" })
-      if not opts.handlers then opts.handlers = {} end
-      opts.handlers.python = function() end -- make sure python doesn't get set up by mason-nvim-dap, it's being set up by nvim-dap-python
     end,
   },
   {
@@ -113,13 +106,11 @@ return {
     dependencies = "mfussenegger/nvim-dap",
     ft = "python", -- NOTE: ft: lazy-load on filetype
     config = function(_, opts)
-      local path = require("mason-registry").get_package("debugpy"):get_install_path()
       if vim.fn.has "win32" == 1 then
-        path = path .. "/venv/Scripts/python"
+        require("dap-python").setup(require("helper.file").get_pkg_path("debugpy", "/venv/Scripts/pythonw.exe"), opts)
       else
-        path = path .. "/venv/bin/python"
+        require("dap-python").setup(require("helper.file").get_pkg_path("debugpy", "/venv/bin/python"), opts)
       end
-      require("dap-python").setup(path, opts)
     end,
   },
   {
