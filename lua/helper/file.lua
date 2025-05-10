@@ -2,6 +2,35 @@ local M = {}
 
 local Path = require "plenary.path"
 
+--- Gets a path to a package in the Mason registry.
+--- Prefer this to `get_package`, since the package might not always be
+--- available yet and trigger errors.
+---@param pkg string
+---@param path? string
+---@param opts? { warn?: boolean }
+function M.get_pkg_path(pkg, path, opts)
+  pcall(require, "mason") -- make sure Mason is loaded. Will fail when generating docs
+  local root = vim.env.MASON or (vim.fn.stdpath "data" .. "/mason")
+  opts = opts or {}
+  opts.warn = opts.warn == nil and true or opts.warn
+  path = path or ""
+  local ret = root .. "/packages/" .. pkg .. "/" .. path
+  if opts.warn and not vim.loop.fs_stat(ret) and not require("lazy.core.config").headless() then
+    vim.schedule(
+      function()
+        vim.notify(
+          ("Mason package path not found for **%s**:\n- `%s`\nYou may need to force update the package."):format(
+            pkg,
+            path
+          ),
+          vim.log.levels.WARN
+        )
+      end
+    )
+  end
+  return ret
+end
+
 function M.get_filename_with_extension_from_path(path) return string.match(path, "([^/]+)$") end
 
 function M.get_parent_dir(path) return path:match "(.+)/" end
