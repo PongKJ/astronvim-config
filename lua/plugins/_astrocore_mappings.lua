@@ -5,7 +5,6 @@ return {
   ---@param opts AstroCoreOpts
   opts = function(_, opts)
     if not opts.mappings then opts.mappings = require("astrocore").empty_map_table() end
-    -- TODO: Move workspace_type to other place
     local workspace_type = require("utils").detect_workspace_type()
     local overseer = require "overseer"
     vim.notify("Workspace Type:" .. workspace_type .. "", vim.log.levels.INFO)
@@ -18,29 +17,18 @@ return {
           desc = "Ensure dotfiles",
         }
       end
+      -- <Leader>n
+      maps.n["<Leader>n"] = { "", desc = "Tasks" }
+      -- close search highlight
+      -- maps.n["<Leader>nh"] = { ":nohlsearch<CR>", desc = "Close search highlight", silent = true }
+      maps.n["<Leader>nn"] = { "<Cmd>CopilotChatToggle<CR>", desc = "Copilot Chat Toggle" }
       -- Overseer + .vscode/tasks.json to manage tasks
       maps.n["<Leader>o"] = { "", desc = "Overseer" }
       -- TODO: Add other workspace types
       if workspace_type == "c_cpp" then
-        maps.n["<Leader>ns"] = { "<Cmd>ClangdSwitchSourceHeader<CR>", desc = "Switch between source and header" }
-        maps.n["<Leader>c"] = { "", desc = "C_Cpp tasks" }
-        maps.n["<Leader>cr"] = {
-          "<Cmd>OverseerRun RUN<CR>",
-          desc = "Run target",
-        }
-        maps.n["<Leader>cb"] = {
-          "<Cmd>OverseerRun Build<CR>",
-          desc = "Build target",
-        }
-        maps.n["<Leader>ct"] = {
-          "<Cmd>OverseerRun Test<CR>",
-          desc = "Running target",
-        }
-        maps.n["<Leader>cc"] = {
-          "<Cmd>OverseerRun CLEAN<CR>",
-          desc = "clean",
-        }
-        maps.n["<Leader>csr"] = {
+        maps.n["<Leader>ns"] = { "", desc = "Select Target" }
+        maps.n["<Leader>nh"] = { "<Cmd>ClangdSwitchSourceHeader<CR>", desc = "Switch between source and header" }
+        maps.n["<Leader>nsr"] = {
           function()
             vim.ui.input({ prompt = "target to run:" }, function(target)
               if target then
@@ -53,12 +41,12 @@ return {
           end,
           desc = "Run specific target",
         }
-        maps.n["<Leader>cc"] = {
+        maps.n["<Leader>nc"] = {
           "<Cmd>TermExec cmd='tsx project.mts config'<CR>",
           desc = "Cmake config",
         }
-        maps.n["<Leader>cb"] = { "<Cmd>TermExec cmd='tsx project.mts build'<CR>", desc = "Build target" }
-        maps.n["<Leader>csb"] = {
+        maps.n["<Leader>nb"] = { "<Cmd>TermExec cmd='tsx project.mts build'<CR>", desc = "Build target" }
+        maps.n["<Leader>nsb"] = {
           function()
             vim.ui.input({ prompt = "target to build:" }, function(target)
               if target then
@@ -70,22 +58,21 @@ return {
           end,
           desc = "Build specific target",
         }
-        maps.n["<Leader>ct"] = { "<Cmd>TermExec cmd='tsx project.mts test'<CR>", desc = "Test" }
-        maps.n["<Leader>cd"] = { "<Cmd>akeDebug<CR>", desc = "Debug" }
+        maps.n["<Leader>nt"] = { "<Cmd>TermExec cmd='tsx project.mts test'<CR>", desc = "Test" }
+        maps.n["<Leader>nd"] = { "<Cmd>CMakeDebug<CR>", desc = "Debug" }
         maps.n["<F5>"] = { "<cmd>CMakeDebug<CR>", desc = "Start Debug" }
       end
       if workspace_type == "rust" then
-        maps.n["<Leader>c"] = { "", desc = "Cargo tasks" }
-        maps.n["<Leader>cs"] = { "", desc = "Select Target" }
+        maps.n["<Leader>ns"] = { "", desc = "Select Target" }
         maps.n["<F5>"] = { "<Cmd>RustLsp! debuggables<CR>", desc = "Start Debug" }
-        maps.n["<Leader>cd"] = { "<CMd>RustLsp! debuggables<CR>", desc = "Debug" }
-        maps.n["<Leader>csd"] = { "<Cmd>RustLsp debuggables<CR>", desc = "Select Debug Target" }
-        maps.n["<Leader>cb"] = {
+        maps.n["<Leader>nd"] = { "<CMd>RustLsp! debuggables<CR>", desc = "Debug" }
+        maps.n["<Leader>nsd"] = { "<Cmd>RustLsp debuggables<CR>", desc = "Select Debug Target" }
+        maps.n["<Leader>nb"] = {
           function() overseer.run_template { tags = { overseer.TAG.BUILD } } end,
           desc = "Build",
         }
-        maps.n["<Leader>cr"] = { "<Cmd>RustLsp! runnables<CR>", desc = "Run" }
-        maps.n["<Leader>csr"] = { "<Cmd>RustLsp runnables<CR>", desc = "Select Run Target" }
+        maps.n["<Leader>nr"] = { "<Cmd>RustLsp! runnables<CR>", desc = "Run" }
+        maps.n["<Leader>nsr"] = { "<Cmd>RustLsp runnables<CR>", desc = "Select Run Target" }
       end
 
       -- term mode mappings
@@ -106,12 +93,6 @@ return {
         desc = "Open or create terminal",
       }
       maps.t["<C-F7>"] = { "<Cmd>TermNew<CR>", desc = "Execute TermNew" }
-
-      -- <Leader>n
-      maps.n["<Leader>n"] = { "", desc = "Highlights and copilot" }
-      -- close search highlight
-      maps.n["<Leader>nh"] = { ":nohlsearch<CR>", desc = "Close search highlight", silent = true }
-      maps.n["<Leader>nc"] = { "<Cmd>CopilotChatToggle<CR>", desc = "Copilot Chat Toggle" }
 
       maps.n["<Leader>bd"] = {
         function() require("astrocore.buffer").close(0) end,
@@ -159,7 +140,6 @@ return {
         desc = "Previous buffer",
       }
       -- maps.n["<Leader>bo"] = maps.n["<Leader>bc"]
-
       -- lsp restart
       maps.n["<Leader>lm"] = { "<Cmd>LspRestart<CR>", desc = "Lsp restart" }
       maps.n["<Leader>lg"] = { "<Cmd>LspLog<CR>", desc = "Show lsp log" }
@@ -177,32 +157,30 @@ return {
           desc = "ToggleTerm lazydocker",
         }
       end
-
-      if vim.fn.executable "btm" == 1 then
-        maps.n["<Leader>tt"] = {
-          require("utils").toggle_btm(),
-          desc = "ToggleTerm btm",
-        }
-      end
-
-      if vim.fn.executable "unimatrix" == 1 then
-        maps.n["<Leader>tm"] = {
-          require("utils").toggle_unicmatrix(),
-          desc = "ToggleTerm unimatrix",
-        }
-      end
-
-      if vim.fn.executable "tte" == 1 then
-        maps.n["<Leader>te"] = {
-          require("utils").toggle_tte(),
-          desc = "ToggleTerm tte",
-        }
-      end
     end
     opts.mappings = maps
+
+    -- NeoScroll mappings
+    local neoscroll = require "neoscroll"
+    local keymap = {
+      ["<C-u>"] = function() neoscroll.ctrl_u { duration = 100 } end,
+      ["<C-d>"] = function() neoscroll.ctrl_d { duration = 100 } end,
+      ["<C-b>"] = function() neoscroll.ctrl_b { duration = 200 } end,
+      ["<C-f>"] = function() neoscroll.ctrl_f { duration = 200 } end,
+      ["<C-y>"] = function() neoscroll.scroll(-0.1, { move_cursor = false, duration = 100 }) end,
+      ["<C-e>"] = function() neoscroll.scroll(0.1, { move_cursor = false, duration = 100 }) end,
+      ["zt"] = function() neoscroll.zt { half_win_duration = 150 } end,
+      ["zz"] = function() neoscroll.zz { half_win_duration = 150 } end,
+      ["zb"] = function() neoscroll.zb { half_win_duration = 150 } end,
+    }
+    local modes = { "n", "v", "x" }
+    for key, func in pairs(keymap) do
+      vim.keymap.set(modes, key, func)
+    end
+
+    -- Some keymap set in VISUAL mode also affect SELECT mode
+    -- So we need to delete them
     vim.schedule(function()
-      -- Some keymap set in VISUAL mode also affect SELECT mode
-      -- So we need to delete them
       vim.api.nvim_del_keymap("s", "n")
       vim.api.nvim_del_keymap("s", "N")
       vim.api.nvim_del_keymap("s", "H")

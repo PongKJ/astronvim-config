@@ -34,6 +34,11 @@ return {
   { import = "astrocommunity.completion.cmp-latex-symbols" },
   { import = "astrocommunity.completion.cmp-calc" },
   { import = "astrocommunity.completion.cmp-spell" },
+  { import = "astrocommunity.recipes.heirline-vscode-winbar" },
+  { import = "astrocommunity.recipes.vscode" },
+  { import = "astrocommunity.recipes.picker-lsp-mappings" },
+  { import = "astrocommunity.recipes.diagnostic-virtual-lines-current-line" },
+  { import = "astrocommunity.utility.lua-json5" },
   {
     "AstroNvim/astrocore",
     opts = {

@@ -1,180 +1,30 @@
 return {
   "stevearc/overseer.nvim",
-  config = function()
-    local overseer = require "overseer"
-    overseer.setup {
-      -- Default task strategy
-      strategy = {
-        "toggleterm",
-        -- load your default shell before starting the task
-        use_shell = false,
-        -- overwrite the default toggleterm "direction" parameter
-        direction = "horizontal",
-        -- overwrite the default toggleterm "highlights" parameter
-        highlights = nil,
-        -- overwrite the default toggleterm "auto_scroll" parameter
-        auto_scroll = true,
-        -- have the toggleterm window close and delete the terminal buffer
-        -- automatically after the task exits
-        close_on_exit = false,
-        -- have the toggleterm window close without deleting the terminal buffer
-        -- automatically after the task exits
-        -- can be "never, "success", or "always". "success" will close the window
-        -- only if the exit code is 0.
-        quit_on_exit = "never",
-        -- open the toggleterm window when a task starts
-        open_on_start = false,
-        -- mirrors the toggleterm "hidden" parameter, and keeps the task from
-        -- being rendered in the toggleable window
-        hidden = true,
-        -- command to run when the terminal is created. Combine with `use_shell`
-        -- to run a terminal command before starting the task
-        on_create = nil,
-      },
-
-      -- Template modules to load
-      templates = {
-        "builtin",
-        -- "user.cmake_debug",
-        "c_c++.run",
-      },
-      -- When true, tries to detect a green color from your colorscheme to use for success highlight
-      auto_detect_success_color = true,
-      -- Patch nvim-dap to support preLaunchTask and postDebugTask
-      dap = true,
-      -- Configure the task list
+  event = "User AstroFile",
+  ---@param opts overseer.Config
+  opts = function(_, opts)
+    local window_scaling_factor = 0.3
+    local height = require("utils").size(vim.o.lines, window_scaling_factor)
+    local width = require("utils").size(vim.o.columns, window_scaling_factor)
+    return vim.tbl_deep_extend("force", opts, {
+      dap = false,
+      templates = { "builtin" },
       task_list = {
-        -- Default detail level for tasks. Can be 1-3.
+        width = width,
+        height = height,
         default_detail = 1,
-        -- Width dimensions can be integers or a float between 0 and 1 (e.g. 0.4 for 40%)
-        -- min_width and max_width can be a single value or a list of mixed integer/float types.
-        -- max_width = {100, 0.2} means "the lesser of 100 columns or 20% of total"
-        max_width = { 100, 0.2 },
-        -- min_width = {40, 0.1} means "the greater of 40 columns or 10% of total"
-        min_width = { 40, 0.1 },
-        -- optionally define an integer/float for the exact width of the task list
-        width = nil,
-        max_height = { 20, 0.1 },
-        min_height = 8,
-        height = nil,
-        -- String that separates tasks
-        separator = "--------------------------------------",
-        -- Default direction. Can be "left", "right", or "bottom"
         direction = "bottom",
-        -- Set keymap to false to remove default behavior
-        -- You can add custom keymaps here as well (anything vim.keymap.set accepts)
         bindings = {
-          ["?"] = "ShowHelp",
-          ["g?"] = "ShowHelp",
-          ["<CR>"] = "RunAction",
-          ["<C-e>"] = "Edit",
-          ["o"] = "Open",
-          ["<C-v>"] = "OpenVsplit",
-          ["<C-s>"] = "OpenSplit",
-          ["<C-f>"] = "OpenFloat",
-          ["<C-x>"] = "OpenQuickFix",
-          ["p"] = "TogglePreview",
           ["<C-l>"] = false,
           ["<C-h>"] = false,
-          ["L"] = "IncreaseAllDetail",
-          ["H"] = "DecreaseAllDetail",
-          ["["] = "DecreaseWidth",
-          ["]"] = "IncreaseWidth",
-          ["{"] = "PrevTask",
-          ["}"] = "NextTask",
           ["<C-k>"] = false,
           ["<C-j>"] = false,
-          ["<C-q>"] = "Close",
+          q = "<Cmd>close<CR>",
+          K = "IncreaseDetail",
+          J = "DecreaseDetail",
+          ["<C-p>"] = "ScrollOutputUp",
+          ["<C-n>"] = "ScrollOutputDown",
         },
-      },
-      -- See :help overseer-actions
-      actions = {},
-      -- Configure the floating window used for task templates that require input
-      -- and the floating window used for editing tasks
-      form = {
-        border = "rounded",
-        zindex = 40,
-        -- Dimensions can be integers or a float between 0 and 1 (e.g. 0.4 for 40%)
-        -- min_X and max_X can be a single value or a list of mixed integer/float types.
-        min_width = 80,
-        max_width = 0.9,
-        width = nil,
-        min_height = 10,
-        max_height = 0.9,
-        height = nil,
-        -- Set any window options here (e.g. winhighlight)
-        win_opts = {
-          winblend = 0,
-        },
-      },
-      task_launcher = {
-        -- Set keymap to false to remove default behavior
-        -- You can add custom keymaps here as well (anything vim.keymap.set accepts)
-        bindings = {
-          i = {
-            ["<C-s>"] = "Submit",
-            ["<C-c>"] = "Cancel",
-          },
-          n = {
-            ["<CR>"] = "Submit",
-            ["<C-s>"] = "Submit",
-            ["q"] = "Cancel",
-            ["?"] = "ShowHelp",
-          },
-        },
-      },
-      task_editor = {
-        -- Set keymap to false to remove default behavior
-        -- You can add custom keymaps here as well (anything vim.keymap.set accepts)
-        bindings = {
-          i = {
-            ["<CR>"] = "NextOrSubmit",
-            ["<C-s>"] = "Submit",
-            ["<Tab>"] = "Next",
-            ["<S-Tab>"] = "Prev",
-            ["<C-c>"] = "Cancel",
-          },
-          n = {
-            ["<CR>"] = "NextOrSubmit",
-            ["<C-s>"] = "Submit",
-            ["<Tab>"] = "Next",
-            ["<S-Tab>"] = "Prev",
-            ["q"] = "Cancel",
-            ["?"] = "ShowHelp",
-          },
-        },
-      },
-      -- Configure the floating window used for confirmation prompts
-      confirm = {
-        border = "rounded",
-        zindex = 40,
-        -- Dimensions can be integers or a float between 0 and 1 (e.g. 0.4 for 40%)
-        -- min_X and max_X can be a single value or a list of mixed integer/float types.
-        min_width = 20,
-        max_width = 0.5,
-        width = nil,
-        min_height = 6,
-        max_height = 0.9,
-        height = nil,
-        -- Set any window options here (e.g. winhighlight)
-        win_opts = {
-          winblend = 0,
-        },
-      },
-      -- Configuration for task floating windows
-      task_win = {
-        -- How much space to leave around the floating window
-        padding = 2,
-        border = "rounded",
-        -- Set any window options here (e.g. winhighlight)
-        win_opts = {
-          winblend = 0,
-        },
-      },
-      -- Configuration for mapping help floating windows
-      help_win = {
-        border = "rounded",
-        win_opts = {},
       },
       -- Aliases for bundles of components. Redefine the builtins, or create your own.
       component_aliases = {
@@ -183,7 +33,6 @@ return {
           { "display_duration", detail_level = 2 },
           "on_output_summarize",
           "on_exit_set_status",
-          "on_complete_notify",
           { "on_complete_dispose", require_view = { "SUCCESS", "FAILURE" } },
         },
         -- Tasks from tasks.json use these components
@@ -199,37 +48,40 @@ return {
           bundleable = true,
         },
         -- Autostart tasks when they are loaded from a bundle
-        autostart_on_load = true,
+        autostart_on_load = false,
       },
-      -- A list of components to preload on setup.
-      -- Only matters if you want them to show up in the task editor.
-      preload_components = {},
-      -- Controls when the parameter prompt is shown when running a template
-      --   always    Show when template has any params
-      --   missing   Show when template has any params not explicitly passed in
-      --   allow     Only show when a required param is missing
-      --   avoid     Only show when a required param with no default value is missing
-      --   never     Never show prompt (error if required param missing)
-      default_template_prompt = "allow",
-      -- For template providers, how long to wait (in ms) before timing out.
-      -- Set to 0 to disable timeouts.
-      template_timeout = 3000,
-      -- Cache template provider results if the provider takes longer than this to run.
-      -- Time is in ms. Set to 0 to disable caching.
-      template_cache_threshold = 100,
-      -- Configure where the logs go and what level to use
-      -- Types are "echo", "notify", and "file"
-      log = {
-        {
-          type = "echo",
-          level = vim.log.levels.WARN,
-        },
-        {
-          type = "file",
-          filename = "overseer.log",
-          level = vim.log.levels.WARN,
-        },
-      },
-    }
+    })
   end,
+  specs = {
+    {
+      "mfussenegger/nvim-dap",
+      optional = true,
+      opts = function() require("overseer").enable_dap() end,
+    },
+    {
+      "nvim-neotest/neotest",
+      optional = true,
+      opts = function(_, opts)
+        opts = opts or {}
+        opts.consumers = opts.consumers or {}
+        opts.consumers.overseer = require "neotest.consumers.overseer"
+      end,
+    },
+    { "AstroNvim/astroui", opts = { icons = { Overseer = "" } } },
+    {
+      "AstroNvim/astrocore",
+      opts = function(_, opts)
+        local maps = opts.mappings or {}
+        local prefix = "<leader>m"
+        maps.n[prefix] = { desc = require("astroui").get_icon("Overseer", 1, true) .. "Overseer" }
+
+        maps.n[prefix .. "t"] = { "<Cmd>OverseerToggle<CR>", desc = "Toggle Overseer" }
+        maps.n[prefix .. "c"] = { "<Cmd>OverseerRunCmd<CR>", desc = "Run Command" }
+        maps.n[prefix .. "r"] = { "<Cmd>OverseerRun<CR>", desc = "Run Task" }
+        maps.n[prefix .. "q"] = { "<Cmd>OverseerQuickAction<CR>", desc = "Quick Action" }
+        maps.n[prefix .. "a"] = { "<Cmd>OverseerTaskAction<CR>", desc = "Task Action" }
+        maps.n[prefix .. "i"] = { "<Cmd>OverseerInfo<CR>", desc = "Overseer Info" }
+      end,
+    },
+  },
 }

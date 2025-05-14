@@ -1,6 +1,7 @@
 # AstroNvimV5 Config
 
 <!--toc:start-->
+
 - [AstroNvimV5 Config](#astronvimv5-config)
   - [Support neovim version](#support-neovim-version)
   - [Features](#features)
@@ -15,17 +16,13 @@
     - [NVcheatsheet](#nvcheatsheet)
     - [Use Lazygit](#use-lazygit)
     - [Install unimatrix](#install-unimatrix)
-    - [Install TTE](#install-tte)
-    - [Install Bottom](#install-bottom)
     - [Neovim requirements](#neovim-requirements)
     - [Markdown Image Paste](#markdown-image-paste)
     - [Input Auto Switch](#input-auto-switch)
     - [Support for neovide](#support-for-neovide)
     - [Support Lazydocker](#support-lazydocker)
-  - [General Mappings](#general-mappings)
-    - [Signature Help](#signature-help)
-<!--toc:end-->
-
+  - [General Mappings](#general-mappings) - [Signature Help](#signature-help)
+  <!--toc:end-->
 
 ## Support neovim version
 
@@ -51,72 +48,7 @@ this config supports development in `TypeScript`,`Python`,`Go`,`Rust`,`markdown`
 
 ### Recommend install
 
-rust toolchain:
-`yay -S rustup`
-`rustup default stable`
-
-go toolchain:
-`yay -S go`
-
-fzf:
-`yay -S fzf`
-
-fd:
-`yay -S fd`
-
-luarocks:
-`yay -S luarocks`
-
-magick:
-`sudo luarocks --lua-version 5.1 install magick`
-
-clazy-standalone:
-`yay -S clazy`
-
-lazygit:
-`yay -S lazygit`
-
-ripgrep:
-`yay -S ripgrep`
-
-tree-sitter-cli:
-`npm install -g tree-sitter-cli`
-
-gdu:
-`yay -S gdu`
-
-bottom:
-`yay -S bottom`
-
-protobuf:
-`yay -S protobuf`
-
-mercurial:
-`yay -S mercurial`
-
-xxd:
-`yay -S xxd`
-
-trash-cli:
-`sudo pacman -S trash-cli`
-
-```
-pip install notebook nbclassic jupyter-console
-pip install git+https://github.com/will8211/unimatrix.git
-npm install -g neovim
-pip install pynvim
-pip install terminaltexteffects
-```
-
-> brew tap daipeihust/tap
-> im-select:for windows or Darwin
-> Use fcitx framework on linux
-
-neovide:
-`yay -S neovide`
-
-lazydocker:
-`yay -S lazydocker-bin`
+See `scripts/setup_arch_linux.sh` and `setup_mac.sh` for required prerequisites
 
 ### Note: for rust development
 
@@ -165,32 +97,6 @@ nvim
 ### Install unimatrix
 
 `<Leader>tm`
-
-```bash
-pip install git+https://github.com/will8211/unimatrix.git
-```
-
-![unimatrix](assets/imgs/unimatrix.png)
-
-### Install TTE
-
-`<Leader>te`
-
-```bash
-pip install terminaltexteffects
-```
-
-https://github.com/user-attachments/assets/ff8aa481-932d-431c-b1a1-ea7cc6e63920
-
-### Install Bottom
-
-`<Leader>tt`
-
-```bash
-brew install bottom
-```
-
-![bottom](assets/imgs/bottom.png)
 
 ### Neovim requirements
 
@@ -243,7 +149,7 @@ brew install lazydocker
 
 ## General Mappings
 
-| Action                      | Mappings              | Mode |
+| Action                      | Mapping               | Mode |
 | --------------------------- | --------------------- | ---- |
 | Leader key                  | <kbd>Space</kbd>      | n    |
 | Resize up                   | <kbd>Ctrl+Up</kbd>    | n    |
@@ -263,17 +169,28 @@ brew install lazydocker
 | Comment                     | <kbd>Control+/</kbd>  | n    |
 | Horizontal Split            | <kbd>/</kbd>          | n    |
 | Vertical Split              | <kbd>\|</kbd>         | n    |
-| Open task menu              | <kbd>Leader+c</kbd>   | n    |
+| Open task menu              | <kbd>Leader+n</kbd>   | n    |
+
+---
 
 Copilot Mappings
-| Action | Mappings | Mode |
+| Action | Mapping | Mode |
 | ------------------------ | --------------------- | ---- |
-| Open chat panel | <kbd>Leader+n+c</kbd> | n |
+| Open chat panel | <kbd>Leader+n+n</kbd> | n |
 | Accept inline suggestion | <kbd>Ctrl+.</kbd> | n |
+
+---
+
+Terminal Mappings
+| Action | Mapping | Column3 |
+| ------------- | -------------- | -------------- |
+| Toggle Terminal | <kbd>F7</kbd> | n |
+| Close Terminal | <kbd>Control+q</kbd>|n|
+| Split Terminal | <kbd>Control+F7</kbd> |n|
 
 ### Signature Help
 
 _vim.lsp.buf.hover()_ `KK` jump into signature help float window
 
-> [!INFO]
+> [!TIP]
 > Displays hover information about the symbol under the cursor in a floating window. Calling the function twice will jump into the floating window.

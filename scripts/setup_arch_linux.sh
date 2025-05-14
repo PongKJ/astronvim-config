@@ -20,6 +20,9 @@ yay -S bottom
 yay -S protobuf
 yay -S mercurial
 yay -S xxd
+yay -S lynx
+yay -S luajit-tiktoken-bin
+yay -S tectonic
 sudo pacman -S trash-cli
 
 pip install notebook nbclassic jupyter-console
@@ -27,5 +30,6 @@ pip install git+https://github.com/will8211/unimatrix.git
 npm install -g neovim
 pip install pynvim
 pip install terminaltexteffects
+pip install pylatexenc 
 
 yay -S lazydocker-bin

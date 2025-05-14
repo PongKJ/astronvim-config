@@ -8,7 +8,6 @@
         ],
         "description": "Docs"
     },
-    // TODO: add more callout types,see https://github.com/MeanderingProgrammer/render-markdown.nvim/wiki/Callouts
     "callout_todo": {
         "prefix": "todo",
         "body": [

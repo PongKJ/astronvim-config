@@ -14,10 +14,14 @@ return {
       },
     },
     opts = {
-      enabled_named_colors = false,
+      enabled_named_colors = true,
       render = "virtual",
       virtual_symbol_position = "inline",
       enable_tailwind = true,
+      virtual_symbol = "󱓻",
+      virtual_symbol_suffix = " ",
+      enable_short_hex = false,
+      enable_hex = true,
     },
   },
 }

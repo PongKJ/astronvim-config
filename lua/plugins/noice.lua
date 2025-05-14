@@ -1,121 +1,40 @@
-local utils = require "astrocore"
-local is_available = utils.is_available
-
 ---@type LazySpec
 return {
   {
-    "nvim-treesitter/nvim-treesitter",
-    opts = function(_, opts)
-      if opts.ensure_installed ~= "all" then
-        opts.ensure_installed = require("astrocore").list_insert_unique(
-          opts.ensure_installed,
-          { "bash", "markdown", "markdown_inline", "regex", "vim" }
-        )
-      end
-    end,
-  },
-  {
-    "AstroNvim/astrolsp",
-    optional = true,
-    ---@param opts AstroLSPOpts
-    opts = function(_, opts)
-      local noice_opts = require("astrocore").plugin_opts "noice.nvim"
-      -- disable the necessary handlers in AstroLSP
-      if not opts.lsp_handlers then opts.lsp_handlers = {} end
-      if vim.tbl_get(noice_opts, "lsp", "hover", "enabled") ~= false then
-        opts.lsp_handlers["textDocument/hover"] = false
-      end
-      if vim.tbl_get(noice_opts, "lsp", "signature", "enabled") ~= false then
-        opts.lsp_handlers["textDocument/signatureHelp"] = false
-      end
-    end,
-  },
-  {
-    "rebelot/heirline.nvim",
-    optional = true,
-    opts = function(_, opts)
-      local noice_opts = require("astrocore").plugin_opts "noice.nvim"
-      if vim.tbl_get(noice_opts, "lsp", "progress", "enabled") ~= false then -- check if lsp progress is enabled
-        opts.statusline[9] = require("astroui.status").component.lsp { lsp_progress = false }
-      end
-    end,
-  },
-  {
     "folke/noice.nvim",
+    enabled = true,
     event = "VeryLazy",
     dependencies = {
-      "MunifTanjim/nui.nvim",
-      "karb94/neoscroll.nvim",
+      { "MunifTanjim/nui.nvim", lazy = true },
+    },
+    specs = {
       {
-        "AstroNvim/astrocore",
-        ---@param opts AstroLSPOpts
+        "nvim-treesitter/nvim-treesitter",
         opts = function(_, opts)
-          -- WARNING: There will be a conflict between this button and the neo-scroll button, and we will determine whether to resolve it based on the situation
-          if not opts.mappings then opts.mappings = require("astrocore").empty_map_table() end
-          local maps = opts.mappings
-          if maps then
-            if is_available "noice.nvim" then
-              local noice_down = function()
-                if not require("noice.lsp").scroll(4) then
-                  if vim.fn.mode() ~= "i" then
-                    if is_available "neoscroll.nvim" then require("neoscroll").ctrl_d { duration = 250 } end
-                  else
-                    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-d>", true, true, true), "n", true)
-                  end
-                end
-              end
-              local noice_up = function()
-                if not require("noice.lsp").scroll(-4) then
-                  if vim.fn.mode() ~= "i" then
-                    if is_available "neoscroll.nvim" then require("neoscroll").ctrl_u { duration = 250 } end
-                  else
-                    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-u>", true, true, true), "n", true)
-                  end
-                end
-              end
-
-              maps.n["<C-d>"] = {
-                noice_down,
-                desc = "Noice Scroll down",
-              }
-              maps.i["<C-d>"] = {
-                noice_down,
-                desc = "Noice Scroll down",
-              }
-              maps.s["<C-d>"] = {
-                noice_down,
-                desc = "Noice Scroll down",
-              }
-              maps.x["<C-d>"] = {
-                noice_down,
-                desc = "Noice Scroll down",
-              }
-              maps.n["<C-u>"] = {
-                noice_up,
-                desc = "Noice Scroll up",
-              }
-              maps.i["<C-u>"] = {
-                noice_up,
-                desc = "Noice Scroll up",
-              }
-              maps.s["<C-u>"] = {
-                noice_up,
-                desc = "Noice Scroll up",
-              }
-              maps.x["<C-u>"] = {
-                noice_up,
-                desc = "Noice Scroll up",
-              }
-            end
+          if opts.ensure_installed ~= "all" then
+            opts.ensure_installed = require("astrocore").list_insert_unique(opts.ensure_installed, { "regex", "vim" })
           end
-          opts.mappings = maps
+        end,
+      },
+      {
+        "rebelot/heirline.nvim",
+        optional = true,
+        opts = function(_, opts)
+          local noice_opts = require("astrocore").plugin_opts "noice.nvim"
+          if vim.tbl_get(noice_opts, "lsp", "progress", "enabled") ~= false then -- check if lsp progress is enabled
+            opts.statusline[9] = require("astroui.status").component.lsp { lsp_progress = false }
+          end
         end,
       },
     },
     opts = function(_, opts)
-      return utils.extend_tbl(opts, {
+      return vim.tbl_deep_extend("force", opts, {
         lsp = {
           hover = {
+            -- Use default hover doc window instead of this
+            -- WARN: hover scroll won't work anymore, see https://github.com/neovim/neovim/issues/27288
+            -- Should firstly jump to hover window, then scroll
+            enabled = false,
             silent = true,
           },
           -- override markdown rendering so that **cmp** and other plugins use **Treesitter**
@@ -125,15 +44,15 @@ return {
             ["cmp.entry.get_documentation"] = true,
           },
           signature = {
+            -- Use blink.cmp for signature help instead of this
             enabled = false,
             auto_open = {
               enabled = true,
               trigger = true, -- Automatically show signature help when typing a trigger character from the LSP
-              luasnip = true, -- Will open signature help when jumping to Luasnip insert nodes
+              luasnip = false, -- Will open signature help when jumping to Luasnip insert nodes
               throttle = 50, -- Debounce lsp signature help request by 50ms
             },
             view = nil, -- when nil, use defaults from documentation
-            ---@type NoiceViewOptions
             opts = {}, -- merged with defaults from documentation
           },
           message = {
@@ -153,8 +72,16 @@ return {
           { filter = { event = "msg_show", find = "DB: Query%s" }, opts = { skip = true } },
           { filter = { event = "msg_show", find = "%swritten" }, opts = { skip = true } },
           { filter = { event = "msg_show", find = "%schange;%s" }, opts = { skip = true } },
+          { filter = { event = "msg_show", find = "%s已写入" }, opts = { skip = true } },
+          { filter = { event = "msg_show", find = ".*行发生改变.*" }, opts = { skip = true } },
+          { filter = { event = "msg_show", find = ".*fewer lines" }, opts = { skip = true } },
+          { filter = { event = "msg_show", find = ".*vim.tbl_islist is deprecated.*" }, opts = { skip = true } },
           {
-            filter = { event = "lsp", find = "%-32603: Invalid offset%" },
+            filter = { event = "msg_show", find = '.*Run ":checkhealth vim.deprecated".*' },
+            opts = { skip = true },
+          },
+          {
+            filter = { event = "msg_show", find = "%-32603: Invalid offset" },
             opts = { skip = true },
           },
         },

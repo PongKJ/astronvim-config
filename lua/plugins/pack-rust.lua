@@ -1,9 +1,10 @@
---WARNING: now rust-analyzer can't use in neovim, because this issue
+--WARNING: now rust-analyzer is can't use in neovim, because this issue
 -- https://github.com/rust-lang/rust-analyzer/issues/17289
 -- https://github.com/williamboman/mason.nvim/issues/1741
-local utils = require "astrocore"
-
 local set_mappings = require("astrocore").set_mappings
+-- rust-analyzer/bacon-ls
+-- vim.g.astronvim_rust_diagnostics = "bacon-ls"
+local diagnostics = vim.g.astronvim_rust_diagnostics or "rust-analyzer"
 
 local function preview_stack_trace()
   local current_line = vim.api.nvim_get_current_line()
@@ -31,95 +32,126 @@ end
 ---@type LazySpec
 return {
   {
-    "AstroNvim/astrolsp",
-    opts = {
-      config = {
-        rust_analyzer = {
-          on_attach = function()
-            vim.api.nvim_create_autocmd({ "TermOpen", "TermClose", "BufEnter" }, {
-              pattern = "*cargo*",
-              desc = "Jump to error line",
-              callback = function()
-                set_mappings({
-                  n = {
-                    ["gd"] = {
-                      preview_stack_trace,
-                      desc = "Jump to error line",
-                    },
-                  },
-                }, { buffer = true })
-              end,
-            })
-          end,
-        },
-      },
-    },
+    "cmrschwarz/rust-prettifier-for-lldb",
+    lazy = true,
   },
   {
-    "nvim-treesitter/nvim-treesitter",
+    "AstroNvim/astrolsp",
+    ---@type AstroLSPOpts
     opts = function(_, opts)
-      if opts.ensure_installed ~= "all" then
-        opts.ensure_installed = utils.list_insert_unique(opts.ensure_installed, { "rust", "toml", "ron" })
-      end
+      if diagnostics ~= "rust-analyzer" then require("astrocore").list_insert_unique(opts.servers, { "bacon_ls" }) end
+      return vim.tbl_deep_extend("force", opts, {
+        handlers = {
+          rust_analyzer = false,
+        },
+        ---@diagnostic disable: missing-fields
+        config = {
+          bacon_ls = {
+            init_options = {
+              updateOnSave = true,
+              updateOnSaveWaitMillis = 1000,
+              updateOnChange = false,
+            },
+          },
+          rust_analyzer = {
+            on_attach = function()
+              vim.api.nvim_create_autocmd({ "TermOpen", "TermClose", "BufEnter" }, {
+                pattern = "term://*",
+                desc = "Jump to error line",
+                callback = function()
+                  if vim.bo.buftype == "terminal" then
+                    local buf_name = vim.api.nvim_buf_get_name(0)
+                    local cmd = string.match(buf_name, ":%s*(cargo build)$")
+                    if cmd then
+                      set_mappings({
+                        n = {
+                          ["gd"] = {
+                            preview_stack_trace,
+                            desc = "Jump to error line",
+                          },
+                        },
+                      }, { buffer = true })
+                    end
+                  end
+                end,
+              })
+            end,
+            settings = {
+              ["rust-analyzer"] = {
+                cargo = {
+                  allFeatures = true,
+                  loadOutDirsFromCheck = true,
+                  buildScripts = {
+                    enable = true,
+                  },
+                },
+                -- Add clippy lints for Rust if using rust-analyzer
+                checkOnSave = diagnostics == "rust-analyzer",
+                -- Enable diagnostics if using rust-analyzer
+                diagnostics = {
+                  enable = diagnostics == "rust-analyzer",
+                },
+                procMacro = {
+                  enable = true,
+                  ignored = {
+                    ["async-trait"] = { "async_trait" },
+                    ["napi-derive"] = { "napi" },
+                    ["async-recursion"] = { "async_recursion" },
+                  },
+                },
+                files = {
+                  excludeDirs = {
+                    ".direnv",
+                    ".git",
+                    ".github",
+                    ".gitlab",
+                    "bin",
+                    "node_modules",
+                    "target",
+                    "venv",
+                    ".venv",
+                  },
+                },
+              },
+            },
+          },
+        },
+      })
     end,
   },
   {
-    "PongKJ/mason-nvim-dap.nvim",
+    "nvim-treesitter/nvim-treesitter",
     optional = true,
+    opts = function(_, opts)
+      if opts.ensure_installed ~= "all" then
+        opts.ensure_installed =
+          require("astrocore").list_insert_unique(opts.ensure_installed, { "rust", "toml", "ron" })
+      end
+    end,
   },
   {
     "WhoIsSethDaniel/mason-tool-installer.nvim",
     optional = true,
     opts = function(_, opts)
-      -- lsp
-      opts.ensure_installed = utils.list_insert_unique(opts.ensure_installed, {
-        { "codelldb" },
-      })
+      opts.ensure_installed = require("astrocore").list_insert_unique(opts.ensure_installed, { "codelldb" })
+      if diagnostics ~= "rust-analyzer" then
+        require("astrocore").list_insert_unique(opts.ensure_installed, { "bacon" })
+      end
     end,
   },
   {
     "mrcjkb/rustaceanvim",
     version = "^5",
-    lazy = false,
     ft = "rust",
     opts = function()
       local astrolsp_avail, astrolsp = pcall(require, "astrolsp")
       local astrolsp_opts = (astrolsp_avail and astrolsp.lsp_opts "rust_analyzer") or {}
       local server = {
         ---@type table | (fun(project_root:string|nil, default_settings: table|nil):table) -- The rust-analyzer settings or a function that creates them.
-        ---
         settings = function(project_root, default_settings)
-          -- default_settings = require("astrocore").extend_tbl(user_default_settings,default_settings)
           local astrolsp_settings = astrolsp_opts.settings or {}
-          local user_default_settings = {
-            -- rust-analyzer language server configuration
-            ["rust-analyzer"] = {
-              cargo = {
-                allFeatures = true,
-                loadOutDirsFromCheck = true,
-                buildScripts = {
-                  enable = true,
-                },
-              },
-              rustfmt = {
-                -- extraArgs = { "--config-path", vim.fn.stdpath "config" .. "/templates/rustfmt.toml" },
-              },
-              -- Add clippy lints for Rust.
-              checkOnSave = {
-                command = "clippy",
-              },
-              procMacro = {
-                enable = true,
-                ignored = {
-                  ["async-trait"] = { "async_trait" },
-                  ["napi-derive"] = { "napi" },
-                  ["async-recursion"] = { "async_recursion" },
-                },
-              },
-            },
-          }
-          local merged_default_settings = require("astrocore").extend_tbl(user_default_settings, default_settings)
-          local merge_table = require("astrocore").extend_tbl(merged_default_settings or {}, astrolsp_settings)
+
+          local merge_table = vim.tbl_deep_extend("force", default_settings or {}, astrolsp_settings)
           local ra = require "rustaceanvim.config.server"
           -- load_rust_analyzer_settings merges any found settings with the passed in default settings table and then returns that table
           return ra.load_rust_analyzer_settings(project_root, {
@@ -128,49 +160,36 @@ return {
           })
         end,
       }
-      local final_server = require("astrocore").extend_tbl(astrolsp_opts, server)
 
-      ---@type rustaceanvim.Opts
+      local final_server = vim.tbl_deep_extend("force", astrolsp_opts, server)
       return {
-        ---@type rustaceanvim.tools.Opts
-        tools = {
-          executor = "toggleterm",
-          test_executor = "toggleterm",
-        },
         server = final_server,
+        tools = { enable_clippy = false },
       }
     end,
     config = function(_, opts)
-      vim.g.rustaceanvim = require("astrocore").extend_tbl(opts, vim.g.rustaceanvim)
       if vim.fn.executable "rust-analyzer" == 0 then
-        require("astrocore").notify(
+        vim.notify(
           "**rust-analyzer** not found in PATH, please install it.\nhttps://rust-analyzer.github.io/",
           vim.log.levels.ERROR
         )
       end
+      vim.g.rustaceanvim = vim.tbl_deep_extend("keep", vim.g.rustaceanvim or {}, opts or {})
     end,
   },
   {
     "Saecki/crates.nvim",
     event = { "BufRead Cargo.toml" },
-    lazy = true,
     opts = {
       completion = {
+        cmp = { enabled = true },
         crates = {
           enabled = true,
-          max_results = 8, -- The maximum number of search results to display
-          min_chars = 2, -- The minimum number of charaters to type before completions begin appearing
         },
-      },
-      null_ls = {
-        enabled = true,
-        name = "crates.nvim",
       },
       lsp = {
         enabled = true,
-        on_attach = function(client, bufnr)
-          -- the same on_attach function as for your other lsp's
-        end,
+        on_attach = function(...) require("astrolsp").on_attach(...) end,
         actions = true,
         completion = true,
         hover = true,
@@ -178,7 +197,7 @@ return {
     },
   },
   {
-    "nvim-nemtest/neotest",
+    "nvim-neotest/neotest",
     optional = true,
     opts = function(_, opts)
       if not opts.adapters then opts.adapters = {} end
