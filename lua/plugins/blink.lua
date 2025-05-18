@@ -84,6 +84,27 @@ return {
         return {}
       end,
     },
+    fuzzy = {
+      implementation = "prefer_rust_with_warning",
+      prebuilt_binaries = {
+        download = true,
+        force_version = "v1.1.1",
+      },
+      sorts = {
+        -- example custom sorting function, ensuring `_` entries are always last (untested, YMMV)
+        function(a, b)
+          if a.label:sub(1, 1) == "_" ~= a.label:sub(1, 1) == "_" then
+            -- return true to sort `a` after `b`, and vice versa
+            return not a.label:sub(1, 1) == "_"
+          end
+          -- nothing returned, fallback to the next sort
+        end,
+        -- default sorts
+        "score",
+        "exact",
+        "sort_text",
+      },
+    },
     sources = {
       -- TODO: adding any nvim-cmp sources here will enable them with blink.compat
       compat = {},
@@ -101,38 +122,24 @@ return {
             dictionary_files = { vim.fn.expand "~/.config/nvim/dictionary/words.dict" },
             dictionary_directories = { vim.fn.expand "~/.config/nvim/dictionary" },
           },
+          score_offset = 5,
         },
         ripgrep = {
           name = "Ripgrep",
           module = "blink-ripgrep",
+          score_offset = 5,
         },
         path = {
           opts = {
             get_cwd = function(_) return vim.fn.getcwd() end,
           },
-          score_offset = 3,
+          score_offset = 8,
         },
-        -- fuzzy = {
-        --   implementation = "prefer_rust_with_warning",
-        --   prebuilt_binaries = {
-        --     download = true,
-        --     force_version = "v1.1.1",
-        --   },
-        --   sorts = {
-        --     -- example custom sorting function, ensuring `_` entries are always last (untested, YMMV)
-        --     function(a, b)
-        --       if a.label:sub(1, 1) == "_" ~= a.label:sub(1, 1) == "_" then
-        --         -- return true to sort `a` after `b`, and vice versa
-        --         return not a.label:sub(1, 1) == "_"
-        --       end
-        --       -- nothing returned, fallback to the next sort
-        --     end,
-        --     -- default sorts
-        --     "score",
-        --     "sort_text",
-        --   },
-        -- },
+        snippets = {
+          score_offset = 9,
+        },
         lsp = {
+          score_offset = 10,
           ---@type fun(ctx: blink.cmp.Context, items: blink.cmp.CompletionItem[])
           transform_items = function(ctx, items)
             for _, item in ipairs(items) do
