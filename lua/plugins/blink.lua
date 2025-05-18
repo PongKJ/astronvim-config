@@ -31,7 +31,23 @@ return {
   event = { "InsertEnter", "CmdlineEnter" },
   version = "*",
   dependencies = {
-    { "rafamadriz/friendly-snippets", lazy = true },
+    "mikavilpas/blink-ripgrep.nvim",
+    {
+      "rafamadriz/friendly-snippets",
+      lazy = true,
+      config = function(plugin, opts)
+        require "astronvim.plugins.configs.luasnip"(plugin, opts) -- include the default astronvim config that calls the setup call
+        -- load snippets paths
+        require("luasnip.loaders.from_vscode").lazy_load {
+          paths = { vim.fn.stdpath "config" .. "/snippets" },
+        }
+      end,
+    },
+    {
+      "Kaiser-Yang/blink-cmp-dictionary",
+      dependencies = { "nvim-lua/plenary.nvim" },
+    },
+    "echasnovski/mini.icons",
     -- add blink.compat to dependencies
     {
       "saghen/blink.compat",
@@ -39,7 +55,6 @@ return {
       lazy = true,
       version = "*",
     },
-    "echasnovski/mini.icons",
   },
   opts_extend = {
     "sources.completion.enabled_providers",
@@ -70,12 +85,53 @@ return {
       end,
     },
     sources = {
-      -- adding any nvim-cmp sources here will enable them
-      -- with blink.compat
+      -- TODO: adding any nvim-cmp sources here will enable them with blink.compat
       compat = {},
-      default = { "lsp", "path", "snippets", "buffer" },
-      min_keyword_length = 0,
+      default = { "lsp", "path", "snippets", "buffer", "spell", "calc", "latex", "ripgrep", "dictionary" },
+      min_keyword_length = function() return vim.bo.filetype == "markdown" and 2 or 0 end,
       providers = {
+        dictionary = {
+          module = "blink-cmp-dictionary",
+          name = "Dict",
+          max_items = 3,
+          -- Make sure this is at least 2.
+          -- 3 is recommended
+          min_keyword_length = 3,
+          opts = {
+            dictionary_files = { vim.fn.expand "~/.config/nvim/dictionary/words.dict" },
+            dictionary_directories = { vim.fn.expand "~/.config/nvim/dictionary" },
+          },
+        },
+        ripgrep = {
+          name = "Ripgrep",
+          module = "blink-ripgrep",
+        },
+        path = {
+          opts = {
+            get_cwd = function(_) return vim.fn.getcwd() end,
+          },
+          score_offset = 3,
+        },
+        -- fuzzy = {
+        --   implementation = "prefer_rust_with_warning",
+        --   prebuilt_binaries = {
+        --     download = true,
+        --     force_version = "v1.1.1",
+        --   },
+        --   sorts = {
+        --     -- example custom sorting function, ensuring `_` entries are always last (untested, YMMV)
+        --     function(a, b)
+        --       if a.label:sub(1, 1) == "_" ~= a.label:sub(1, 1) == "_" then
+        --         -- return true to sort `a` after `b`, and vice versa
+        --         return not a.label:sub(1, 1) == "_"
+        --       end
+        --       -- nothing returned, fallback to the next sort
+        --     end,
+        --     -- default sorts
+        --     "score",
+        --     "sort_text",
+        --   },
+        -- },
         lsp = {
           ---@type fun(ctx: blink.cmp.Context, items: blink.cmp.CompletionItem[])
           transform_items = function(ctx, items)
@@ -265,25 +321,6 @@ return {
   end,
   specs = {
     {
-      "AstroNvim/astrolsp",
-      ---@type AstroLSPOpts
-      opts = function(_, opts)
-        local has_blink, blink = pcall(require, "blink.cmp")
-        local capabilities =
-          vim.tbl_deep_extend("force", {}, opts.capabilities or {}, has_blink and blink.get_lsp_capabilities() or {})
-        -- disable AstroLSP signature help if `blink.cmp` is providing it
-        local blink_opts = require("astrocore").plugin_opts "blink.cmp"
-        local signature_help = true
-        if vim.tbl_get(blink_opts, "signature", "enabled") == true then signature_help = false end
-        return require("astrocore").extend_tbl(
-          opts,
-          { capabilities = capabilities, features = {
-            signature_help = signature_help,
-          } }
-        )
-      end,
-    },
-    {
       "folke/lazydev.nvim",
       optional = true,
       specs = {
@@ -305,10 +342,5 @@ return {
         },
       },
     },
-    -- disable built in completion plugins
-    { "hrsh7th/nvim-cmp", enabled = false },
-    { "petertriho/cmp-git", enabled = false },
-    { "L3MON4D3/LuaSnip", enabled = false },
-    { "onsails/lspkind.nvim", enabled = false },
   },
 }
