@@ -9,36 +9,6 @@ M = astrocore.extend_tbl(M, require "helper.workspace")
 
 function M.size(max, value) return value > 1 and math.min(value, max) or math.floor(max * value) end
 
-function M.expand(snippet)
-  -- Native sessions don't support nested snippet sessions.
-  -- Always use the top-level session.
-  -- Otherwise, when on the first placeholder and selecting a new completion,
-  -- the nested session will be used instead of the top-level session.
-  -- See: https://github.com/LazyVim/LazyVim/issues/3199
-  local session = vim.snippet.active() and vim.snippet._session or nil
-
-  local ok, err = pcall(vim.snippet.expand, snippet)
-  if not ok then
-    local fixed = M.snippet_fix(snippet)
-    ok = pcall(vim.snippet.expand, fixed)
-
-    local msg = ok and "Failed to parse snippet,\nbut was able to fix it automatically."
-      or ("Failed to parse snippet.\n" .. err)
-
-    vim.notify(
-      ([[%s
-```%s
-%s
-```]]):format(msg, vim.bo.filetype, snippet),
-      ok and vim.log.levels.WARN or vim.log.levels.ERROR,
-      { title = "vim.snippet" }
-    )
-  end
-
-  -- Restore top-level session when needed
-  if session then vim.snippet._session = session end
-end
-
 function M.save_table_as_json(tbl, file_path)
   local json = vim.fn.json_encode(tbl)
   local file = io.open(file_path, "w")

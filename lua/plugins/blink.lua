@@ -62,10 +62,6 @@ return {
     "sources.default",
   },
   opts = {
-    snippets = {
-      expand = function(snippet, _) return require("utils").expand(snippet) end,
-    },
-    -- remember to enable your providers here
     cmdline = {
       keymap = {
         preset = "inherit",
