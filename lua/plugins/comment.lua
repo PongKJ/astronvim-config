@@ -13,12 +13,4 @@ return {
       opts.mappings = require("astrocore").extend_tbl(opts.mappings, maps)
     end,
   },
-  {
-    "numToStr/Comment.nvim",
-    opts = function()
-      local ft = require "Comment.ft"
-      ft.thrift = { "//%s", "/*%s*/" }
-      ft.goctl = { "//%s", "/*%s*/" }
-    end,
-  },
 }

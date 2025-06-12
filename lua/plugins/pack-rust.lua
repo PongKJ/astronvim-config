@@ -205,4 +205,24 @@ return {
       if rustaceanvim_avail then table.insert(opts.adapters, rustaceanvim) end
     end,
   },
+  -- NOTE: This plugin is not ready and have some bugs, wait for better version
+  -- {
+  --   "cordx56/rustowl",
+  --   version = "*", -- Latest stable version
+  --   build = "cargo binstall rustowl",
+  --   lazy = false, -- This plugin is already lazy
+  --   opts = {
+  --     client = {
+  --       on_attach = function(_, buffer)
+  --         vim.keymap.set(
+  --           "n",
+  --           "<leader>no",
+  --           function() require("rustowl").toggle(buffer) end,
+  --           { buffer = buffer, desc = "Toggle RustOwl" }
+  --         )
+  --       end,
+  --     },
+  --     -- highlight_style = "underline",
+  --   },
+  -- },
 }

@@ -5,9 +5,6 @@ return {
     lazy = false,
     ---@type snacks.Config
     opts = {
-      bigfile = { enabled = true },
-      input = { enabled = true },
-      debug = { enabled = true },
       indent = {
         animate = {
           enabled = vim.fn.has "nvim-0.10" == 1,
