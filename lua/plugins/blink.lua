@@ -84,7 +84,7 @@ return {
       implementation = "prefer_rust_with_warning",
       prebuilt_binaries = {
         download = true,
-        force_version = "v1.1.1",
+        force_version = "v1.4.1",
       },
       sorts = {
         -- example custom sorting function, ensuring `_` entries are always last (untested, YMMV)
