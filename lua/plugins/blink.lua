@@ -31,7 +31,6 @@ return {
   event = { "InsertEnter", "CmdlineEnter" },
   version = "*",
   dependencies = {
-    "mikavilpas/blink-ripgrep.nvim",
     {
       "rafamadriz/friendly-snippets",
       lazy = true,
@@ -104,7 +103,7 @@ return {
     sources = {
       -- TODO: adding any nvim-cmp sources here will enable them with blink.compat
       compat = {},
-      default = { "lsp", "path", "snippets", "buffer", "spell", "calc", "latex", "ripgrep", "dictionary" },
+      default = { "lsp", "path", "snippets", "buffer", "spell", "calc", "latex", "dictionary" },
       min_keyword_length = function() return vim.bo.filetype == "markdown" and 2 or 0 end,
       providers = {
         dictionary = {
@@ -118,11 +117,6 @@ return {
             dictionary_files = { vim.fn.expand "~/.config/nvim/dictionary/words.dict" },
             dictionary_directories = { vim.fn.expand "~/.config/nvim/dictionary" },
           },
-          score_offset = 5,
-        },
-        ripgrep = {
-          name = "Ripgrep",
-          module = "blink-ripgrep",
           score_offset = 5,
         },
         path = {
