@@ -212,19 +212,19 @@ return {
       -- adjusts spacing to ensure icons are aligned
       nerd_font_variant = "mono",
     },
-    signature = {
-      enabled = true,
-      trigger = {
-        blocked_trigger_characters = {},
-        blocked_retrigger_characters = {},
-        -- When true, will show the signature help window when the cursor comes after a trigger character when entering insert mode
-        show_on_insert_on_trigger_character = true,
-      },
-      window = {
-        border = "rounded",
-        winhighlight = "Normal:NormalFloat,FloatBorder:FloatBorder",
-      },
-    },
+    -- signature = {
+    --   enabled = true,
+    --   trigger = {
+    --     blocked_trigger_characters = {},
+    --     blocked_retrigger_characters = {},
+    --     -- When true, will show the signature help window when the cursor comes after a trigger character when entering insert mode
+    --     show_on_insert_on_trigger_character = true,
+    --   },
+    --   window = {
+    --     border = "rounded",
+    --     winhighlight = "Normal:NormalFloat,FloatBorder:FloatBorder",
+    --   },
+    -- },
     completion = {
       list = { selection = { preselect = true, auto_insert = false } },
       menu = {
