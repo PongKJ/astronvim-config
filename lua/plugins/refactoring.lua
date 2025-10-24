@@ -58,45 +58,27 @@ return {
           function() require("refactoring").refactor "Inline Variable" end,
           desc = "Inline Variable",
         }
-
-        maps.v[prefix] = { name = get_icon("Refactoring", 1, true) .. "Refactor" }
-        maps.v[prefix .. "e"] = {
-          function() require("refactoring").refactor "Extract Function" end,
-          desc = "Extract Function",
-        }
-        maps.v[prefix .. "f"] = {
-          function() require("refactoring").refactor "Extract Function To File" end,
-          desc = "Extract Function To File",
-        }
-        maps.v[prefix .. "v"] = {
-          function() require("refactoring").refactor "Extract Variable" end,
-          desc = "Extract Variable",
-        }
-        maps.v[prefix .. "i"] = {
-          function() require("refactoring").refactor "Inline Variable" end,
-          desc = "Inline Variable",
-        }
-        maps.v[prefix .. "b"] = {
+        maps.x[prefix .. "b"] = {
           function() require("refactoring").refactor "Extract Block" end,
           desc = "Extract Block",
         }
-        maps.v[prefix .. "bf"] = {
+        maps.x[prefix .. "bf"] = {
           function() require("refactoring").refactor "Extract Block To File" end,
           desc = "Extract Block To File",
         }
-        maps.v[prefix .. "r"] = {
+        maps.x[prefix .. "r"] = {
           function() require("refactoring").select_refactor() end,
           desc = "Select Refactor",
         }
-        maps.v[prefix .. "p"] = {
+        maps.x[prefix .. "p"] = {
           function() require("refactoring").debug.printf { below = false } end,
           desc = "Debug: Print Function",
         }
-        maps.v[prefix .. "c"] = {
+        maps.x[prefix .. "c"] = {
           function() require("refactoring").debug.cleanup {} end,
           desc = "Debug: Clean Up",
         }
-        maps.v[prefix .. "d"] = {
+        maps.x[prefix .. "d"] = {
           function() require("refactoring").debug.print_var { below = false } end,
           desc = "Debug: Print Variable",
         }
