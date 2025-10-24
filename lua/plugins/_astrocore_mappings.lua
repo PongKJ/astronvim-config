@@ -76,9 +76,10 @@ return {
       end
 
       -- term mode mappings
-      maps.t["<esc>"] = { "<C-\\><C-n><CR>", desc = "Exit term mode" }
+      maps.t["<Esc>"] = { "<C-\\><C-n><CR>", desc = "Exit term mode" }
       maps.t["<C-h>"] = { "<Cmd>wincmd h<CR>", desc = "Move to left window" }
       maps.t["<C-j>"] = { "<Cmd>wincmd j<CR>", desc = "Move to down window" }
+      maps.t["<NL>"] = false -- Disable conflicting <NL> mapping (equivalent to <C-j>)
       maps.t["<C-k>"] = { "<Cmd>wincmd k<CR>", desc = "Move to up window" }
       maps.t["<C-l>"] = { "<Cmd>wincmd l<CR>", desc = "Move to right window" }
       maps.t["<C-q>"] = { function() require("astrocore.buffer").close(0) end, desc = "Close terminal" }

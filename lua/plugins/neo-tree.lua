@@ -313,9 +313,21 @@ return {
         popup_border_style = "rounded",
         sources = {
           "filesystem",
+          "buffers",
+          "git_status",
         },
         source_selector = {
           winbar = false,
+        },
+        buffers = {
+          follow_current_file = {
+            enabled = true,
+          },
+        },
+        git_status = {
+          window = {
+            position = "float",
+          },
         },
         filesystem = {
           commands = {

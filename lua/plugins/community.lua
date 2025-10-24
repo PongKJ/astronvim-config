@@ -29,7 +29,6 @@ return {
   { import = "astrocommunity.lsp.nvim-lsp-file-operations" },
   { import = "astrocommunity.recipes.auto-session-restore" },
   { import = "astrocommunity.recipes.neovide" },
-  { import = "astrocommunity.keybinding.nvcheatsheet-nvim" },
   { import = "astrocommunity.recipes.heirline-vscode-winbar" },
   { import = "astrocommunity.completion.cmp-latex-symbols" },
   { import = "astrocommunity.completion.cmp-calc" },
@@ -45,13 +44,6 @@ return {
       mappings = {
         n = {
           ["<F1>"] = false,
-          ["<F2>"] = {
-            function()
-              vim.cmd.Neotree "close"
-              require("nvcheatsheet").toggle()
-            end,
-            desc = "Cheatsheet",
-          },
         },
       },
     },

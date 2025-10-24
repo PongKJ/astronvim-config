@@ -10,14 +10,13 @@ return {
       config = {
         tailwindcss = {
           root_dir = function(fname)
-            local root_pattern = require("lspconfig").util.root_pattern(
+            return vim.fs.root(fname, {
               "tailwind.config.cjs",
               "tailwind.config.js",
               "tailwind.config.ts",
               "postcss.config.js",
-              "config/tailwind.config.js"
-            )
-            return root_pattern(fname)
+              "config/tailwind.config.js",
+            })
           end,
           settings = {
             tailwindCSS = {

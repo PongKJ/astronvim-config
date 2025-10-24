@@ -93,18 +93,6 @@ return {
     end,
   },
   {
-    "jay-babu/mason-null-ls.nvim",
-    optional = true,
-    opts = function(_, opts)
-      if not opts.handlers then opts.handlers = {} end
-
-      opts.handlers.buf = function()
-        diagnostic_auto_import_config()
-        formatting_auto_import_config()
-      end
-    end,
-  },
-  {
     "WhoIsSethDaniel/mason-tool-installer.nvim",
     optional = true,
     opts = function(_, opts)

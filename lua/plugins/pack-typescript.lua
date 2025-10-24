@@ -8,7 +8,7 @@ return {
       config = {
         denols = {
           -- adjust deno ls root directory detection
-          root_dir = function(...) return require("lspconfig.util").root_pattern("deno.json", "deno.jsonc")(...) end,
+          root_dir = function(fname) return vim.fs.root(fname, { "deno.json", "deno.jsonc" }) end,
         },
       },
     },

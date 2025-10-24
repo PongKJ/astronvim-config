@@ -89,7 +89,6 @@ return {
       },
     },
   },
-  { "PongKJ/mason-nvim-dap.nvim", optional = true },
   {
     "Weissle/persistent-breakpoints.nvim",
     event = "BufEnter",

@@ -118,7 +118,7 @@ else
       ft = "go",
       dependencies = {
         "mfussenegger/nvim-dap",
-        { "PongKJ/mason-nvim-dap.nvim", optional = true },
+        { "jay-babu/mason-nvim-dap.nvim", optional = true },
       },
     },
     {
