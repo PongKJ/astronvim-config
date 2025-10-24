@@ -21,8 +21,9 @@
     - [Input Auto Switch](#input-auto-switch)
     - [Support for neovide](#support-for-neovide)
     - [Support Lazydocker](#support-lazydocker)
-  - [General Mappings](#general-mappings) - [Signature Help](#signature-help)
-  <!--toc:end-->
+  - [General Mappings](#general-mappings)
+  - [Signature Help](#signature-help)
+<!--toc:end-->
 
 ## Support neovim version
 
@@ -42,7 +43,7 @@ this config supports development in `TypeScript`,`Python`,`Go`,`Rust`,`markdown`
 
 ## 🛠️ Installation
 
-### The system should supports these commands
+### The system should support these commands
 
 `npm`,`rustc`,`go`
 
@@ -141,7 +142,7 @@ neovide .
 
 ### Support Lazydocker
 
-tigger command: `<leader>td`
+trigger command: `<leader>td`
 
 ```bash
 brew install lazydocker
@@ -174,19 +175,19 @@ brew install lazydocker
 ---
 
 Copilot Mappings
-| Action | Mapping | Mode |
+| Action                   | Mapping               | Mode |
 | ------------------------ | --------------------- | ---- |
-| Open chat panel | <kbd>Leader+n+n</kbd> | n |
-| Accept inline suggestion | <kbd>Ctrl+.</kbd> | n |
+| Open chat panel          | <kbd>Leader+n+n</kbd> | n    |
+| Accept inline suggestion | <kbd>Ctrl+.</kbd>     | n    |
 
 ---
 
 Terminal Mappings
-| Action | Mapping | Column3 |
-| ------------- | -------------- | -------------- |
-| Toggle Terminal | <kbd>F7</kbd> | n |
-| Close Terminal | <kbd>Control+q</kbd>|n|
-| Split Terminal | <kbd>Control+F7</kbd> |n|
+| Action          | Mapping              | Mode |
+| --------------- | -------------------- | ---- |
+| Toggle Terminal | <kbd>F7</kbd>        | n    |
+| Close Terminal  | <kbd>Control+q</kbd> | n    |
+| Split Terminal  | <kbd>Control+F7</kbd> | n    |
 
 ### Signature Help
 

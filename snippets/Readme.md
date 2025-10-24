@@ -9,7 +9,7 @@ We have already been provided with a lot of configurations, which we can refer t
 
 ```json
 "SnipetName" : {
-    "prefix" : "sn"，
+    "prefix" : "sn",
     "body" : [
 
     ],
