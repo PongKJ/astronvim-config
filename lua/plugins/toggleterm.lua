@@ -2,8 +2,10 @@ return {
   "akinsho/toggleterm.nvim",
   opts = function(_, opts)
     local os_name = require("utils").get_os_name()
-    if os_name == "macos" or os_name == "linux" then
+    if os_name == "macos" then
       opts.shell = "fish"
+    elseif os_name == "linux" then
+        opts.shell = "zsh"
     elseif os_name == "windows" then
       vim.opt.shell = "pwsh"
       vim.opt.shellcmdflag = "-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command"

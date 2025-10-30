@@ -54,10 +54,11 @@ return {
     optional = true,
     opts = function(_, opts)
       if opts.ensure_installed ~= "all" then
-        opts.ensure_installed = utils.list_insert_unique(
-          opts.ensure_installed,
-          { "latex", "html", "norg", "typst", "markdown", "markdown_inline" }
-        )
+        if vim.fn.executable "tree-sitter" ~= 1 then
+          error "Markdown pack requires the `tree-sitter` CLI to install latex/typst grammars"
+        end
+        local languages = { "html", "norg", "markdown", "markdown_inline", "latex", "typst" }
+        opts.ensure_installed = utils.list_insert_unique(opts.ensure_installed, languages)
       end
     end,
   },
